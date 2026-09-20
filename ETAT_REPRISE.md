@@ -36,6 +36,8 @@ L’agent AC - Produits a été renforcé dans Copilot Studio avec un outil Team
 
 Le chemin générique de création de brouillon est validé. L’agent AC - Produits est maintenant publié avec une détection tolérante des alias, variantes et fautes produit, notamment `CFN`, `CF`, `C.F.N.` et `Business Planner`. Il reste à valider séparément le chemin enrichi par connaissances produit et à contrôler l’idempotence sur un même MessageId.
 
+Un test de prévisualisation Copilot Studio a été lancé avec une demande mentionnant `CF` et `Business Planner`. L’agent a accepté la demande et a déclenché la recherche dans les connaissances SharePoint, ce qui confirme l’activation du chemin de recherche produit. La prévisualisation est ensuite restée bloquée sur l’analyse d’un document PPTX ; aucune réponse client, aucun brouillon et aucune action Outlook ou Teams n’ont été produits. Ce point est à traiter comme une anomalie de temps de réponse ou d’indexation de la base de connaissances, séparément de la détection des alias.
+
 ## Prochaine validation ciblée
 
 La correction de détection a été appliquée et publiée dans AC - Produits. L’agent normalise maintenant accents, casse, espaces, tirets, points, abréviations et fautes de frappe ; `CF`, `C.F.N.` et `Business Planner` sont proposés comme `CFN` avec confiance réduite si le contexte est ambigu. Rejouer un email équivalent et vérifier que `05 - Rechercher connaissances produit` puis `06 - Rediger brouillon contextualise` sont pris avant la création du brouillon. Le test devra ensuite couvrir les autres produits : `CRM 360`, `DMS`, `Digital Invoice`, `Digital Purchase`, `Digital Signature`, `MaxSat`, `MaxLead`, `Remarketing`, `Missive`, `LPN`, `After Sales Planner`, `Website`, `BI 360` et `Nextlane Platform`.
@@ -52,7 +54,7 @@ Les contrôles finaux restent :
 
 ## Prochaine action
 
-Réaliser le test produit ciblé ci-dessus, puis vérifier `05 - Rechercher connaissances produit`, `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, le brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Ne jamais cliquer sur un bouton d’envoi automatique. Dernière modification du tenant : correction des alias AC - Produits enregistrée et publiée le 20 septembre 2026.
+Réaliser le test produit ciblé par un email réel, puis vérifier `05 - Rechercher connaissances produit`, `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, le brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Surveiller également le temps de réponse de la connaissance PPTX ; si le blocage se reproduit, réduire ou réindexer les sources documentaires avant de relancer la chaîne. Ne jamais cliquer sur un bouton d’envoi automatique. Dernière modification du tenant : correction des alias AC - Produits enregistrée et publiée le 20 septembre 2026.
 
 Les tests locaux sont actuellement au vert : 15 tests réussis, dont la classification, le nettoyage historique en simulation, l’idempotence, les artefacts Power Platform et les garde-fous de sécurité.
 
