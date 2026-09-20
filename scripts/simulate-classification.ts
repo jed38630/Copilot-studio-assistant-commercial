@@ -47,6 +47,49 @@ export function senderDomain(email) {
   return String(domain ?? '').toLowerCase();
 }
 
+const PRODUCT_ALIASES = [
+  { product: 'DMS', aliases: ['dms', 'dealer management system', 'gestion de concession'] },
+  { product: 'Cloud', aliases: ['cloud', 'nextlane cloud'] },
+  { product: 'Digital Invoice', aliases: ['digital invoice', 'e-invoice', 'facture electronique'] },
+  { product: 'Digital Purchase', aliases: ['digital purchase', 'digital.purchase'] },
+  { product: 'Digital Signature', aliases: ['digital signature', 'e-signature'] },
+  { product: 'CRM 360', aliases: ['crm 360', 'crm360'] },
+  { product: 'MaxSat', aliases: ['maxsat', 'max sat'] },
+  { product: 'MaxLead', aliases: ['maxlead', 'max lead'] },
+  { product: 'Remarketing', aliases: ['remarketing'] },
+  { product: 'Missive', aliases: ['missive'] },
+  { product: 'LPN', aliases: ['lpn'] },
+  { product: 'CFN', aliases: ['cfn', 'c.f.n', 'c f n', 'business planner', 'cfn business planner', 'cf'] },
+  { product: 'After Sales Planner', aliases: ['after sales planner', 'after-sales planner', 'asp'] },
+  { product: 'Website', aliases: ['website', 'site web'] },
+  { product: 'BI 360', aliases: ['bi 360', 'bi360'] },
+  { product: 'Nextlane Platform', aliases: ['nextlane platform', 'plateforme nextlane'] }
+];
+
+export function detectProduct(email) {
+  const haystack = normalizeText([
+    email.subject,
+    email.bodyPreview,
+    email.body,
+    email.conversationText
+  ].join(' '));
+  const matches = PRODUCT_ALIASES
+    .map(({ product, aliases }) => ({
+      product,
+      aliases: aliases.filter((alias) => haystack.includes(normalizeText(alias)))
+    }))
+    .filter(({ aliases }) => aliases.length > 0);
+
+  if (matches.length === 0) {
+    return { product: '', aliases: [], candidates: [], confidence: 0 };
+  }
+
+  const candidates = matches.map(({ product }) => product);
+  const aliases = matches.flatMap(({ aliases: found }) => found);
+  const confidence = candidates.length === 1 ? (aliases.includes('cf') ? 75 : 95) : 60;
+  return { product: candidates[0], aliases, candidates, confidence };
+}
+
 export function isKnownClientDomain(email, settings = DEFAULT_SETTINGS) {
   const domain = senderDomain(email);
   return Boolean(email.isKnownClient) || settings.DomainesClientsConnus.some((known) => domain === known || domain.endsWith(`.${known}`));
@@ -133,6 +176,7 @@ export function classifyRealtimeEmail(email, settings = DEFAULT_SETTINGS) {
   const niveauConfiance = calculateConfidence(email, settings);
   const motsClesSensiblesDetectes = detectSensitiveKeywords(email, settings);
   const knownClient = isKnownClientDomain(email, settings);
+  const product = detectProduct(email);
   const newsletterOrAd = Boolean(email.isNewsletter || email.isAdvertisement);
   const automatic = Boolean(email.isAutomatic);
   const risks = [];
@@ -185,6 +229,10 @@ export function classifyRealtimeEmail(email, settings = DEFAULT_SETTINGS) {
 
   return {
     mode: 'realtime',
+    produitIdentifie: product.product,
+    aliasDetectes: product.aliases,
+    produitsCandidats: product.candidates,
+    confianceProduit: product.confidence,
     categorie,
     scorePriorite,
     niveauConfiance,

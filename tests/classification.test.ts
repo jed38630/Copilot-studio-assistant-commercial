@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import {
   classifyRealtimeEmail,
   classifyHistoricalEmail,
+  detectProduct,
   DEFAULT_SETTINGS
 } from '../scripts/simulate-classification.ts';
 
@@ -64,4 +65,15 @@ test('un email avec confiance inférieure à 80 va en surveillance', async () =>
   const decision = classifyRealtimeEmail(email);
   assert.equal(decision.dossierDestination, '04 - À surveiller');
   assert.ok(decision.niveauConfiance < 80);
+});
+
+test('les alias CFN et CF sont reconnus comme le produit CFN', () => {
+  const cfn = detectProduct({ subject: 'Demande Business Planner', bodyPreview: 'Besoin de CFN' });
+  assert.equal(cfn.product, 'CFN');
+  assert.ok(cfn.aliases.includes('business planner'));
+  assert.ok(cfn.aliases.includes('cfn'));
+
+  const cf = detectProduct({ subject: 'Mise en place du CF', bodyPreview: 'Pouvez-vous présenter le produit ?' });
+  assert.equal(cf.product, 'CFN');
+  assert.equal(cf.confidence, 75);
 });
