@@ -18,11 +18,15 @@ Le workflow Power Automate principal est publié avec le routage modulaire et le
 
 ## Dernier diagnostic
 
-Le dernier e-mail de test réussissait l’analyse, le triage et le routage, puis échouait à l’étape `06 - Rédiger brouillon contextualisé` avec `NotFound` lors de la récupération de l’état de conversation.
+Le test réel du 20 septembre 2026 à 21:03 a terminé avec succès jusqu’à la préqualification CRM360 : analyse réussie, triage réussi et préqualification réussie. Le triage a classé la demande comme importante, avec brouillon nécessaire, et la préqualification a renvoyé `produitConcerne=true` pour CRM360.
+
+Le diagnostic suivant a été établi : la condition `04 - Décider si recherche produit` envoyait pourtant la demande vers `Sinon`, ce qui ignorait la recherche produit, la rédaction contextualisée, le parseur et les étapes de création/journalisation du brouillon. La cause était une lecture trop restrictive de la sortie de préqualification.
 
 Le diagnostic est maintenant établi : cette étape utilisait l’action générique M365 Copilot `Chat` avec l’identifiant de l’agent AC - Rédaction. Les autres agents du workflow sont appelés par des nœuds `Assistant`.
 
-Correction effectuée dans le tenant : l’ancien nœud générique M365 Copilot a été supprimé et remplacé par un nœud `Assistant`, renommé `06 - Rediger brouillon contextualise`, associé à AC - Rédaction. Le parseur JSON `07 - Parser la decision structuree` pointe maintenant vers la sortie de ce nouveau nœud et conserve le repli vers l’analyse initiale. Le workflow est enregistré sans erreur bloquante et la version publiée est à jour. Aucun nouvel email n’a encore validé la chaîne complète après cette correction.
+Corrections effectuées dans le tenant : l’ancien nœud générique M365 Copilot a été supprimé et remplacé par un nœud `Assistant`, renommé `06 - Rediger brouillon contextualise`, associé à AC - Rédaction. Le parseur JSON `07 - Parser la decision structuree` pointe maintenant vers la sortie de ce nouveau nœud et conserve le repli vers l’analyse initiale. La condition produit accepte désormais les sorties `adaptiveCardResponse` et `response` de l’agent de préqualification. La correction est enregistrée et publiée.
+
+Le dernier test réel est donc techniquement réussi pour les étapes d’analyse et de préqualification, mais il n’a pas encore validé la chaîne brouillon complète : la recherche produit et la rédaction étaient encore ignorées avant la correction. Aucun envoi n’a été effectué.
 
 Ne pas considérer le test comme réussi tant que les étapes suivantes n’ont pas abouti :
 
@@ -34,7 +38,7 @@ Ne pas considérer le test comme réussi tant que les étapes suivantes n’ont 
 
 ## Prochaine action
 
-Envoyer un nouvel email de test contrôlé, puis vérifier l’exécution complète de `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, la création du brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Ne jamais cliquer sur un bouton d’envoi automatique.
+Envoyer un nouvel email de test contrôlé après publication, puis vérifier l’exécution complète de `05 - Rechercher connaissances produit`, `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, la création du brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Ne jamais cliquer sur un bouton d’envoi automatique.
 
 Les tests locaux sont actuellement au vert : 15 tests réussis, dont la classification, le nettoyage historique en simulation, l’idempotence, les artefacts Power Platform et les garde-fous de sécurité.
 
