@@ -2,6 +2,12 @@
 
 Dernière sauvegarde : 20 septembre 2026
 
+## Dernière modification du workflow
+
+Le bloc `01 - Analyser email et conversation` a été nettoyé puis publié dans `AC - 24-7 - Nouvel email entrant`. Il extrait désormais les faits du dernier message et de la conversation pour alimenter `AC - Triage` : expéditeur, objet, contenu, indices commerciaux, indices d'urgence, éléments sensibles, ambiguïtés et informations manquantes.
+
+Les décisions métier, le score, la catégorie, le routage, la recherche produit, la rédaction du brouillon et la signature ne doivent plus être produits par ce bloc. Ils sont délégués respectivement à `AC - Triage`, `AC - Produits` et `AC - Rédaction`. Aucun changement de source SharePoint, de permission ou d'envoi n'a été effectué.
+
 ## Où nous nous sommes arrêtés
 
 Le projet local et le dépôt GitHub sont synchronisés sur la branche `main`.
