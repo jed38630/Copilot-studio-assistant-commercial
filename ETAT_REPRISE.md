@@ -42,6 +42,8 @@ Inspection en lecture seule des sources : la bibliothèque `Product` contient no
 
 À la demande de Jérémy, l’anomalie PPTX est mise de côté. Une stratégie d’indexation en lecture seule des bibliothèques a été documentée dans `docs/SHAREPOINT_INDEXATION.md`. Elle prévoit un catalogue des fichiers, métadonnées, liens, ETag, pagination Graph et statut d’indexation, sans recopier ni modifier les sources SharePoint. Le flux d’indexation reste à créer dans le tenant après validation de la liste cible.
 
+Une régression locale a été ajoutée dans `scripts/simulate-classification.ts` et `tests/classification.test.ts` : `CFN`, `C.F.N.`, `Business Planner` et `CF` sont reconnus comme le produit `CFN`, avec une confiance réduite pour l’alias court `CF`. La suite locale compte maintenant 16 tests réussis.
+
 ## Prochaine validation ciblée
 
 La correction de détection a été appliquée et publiée dans AC - Produits. L’agent normalise maintenant accents, casse, espaces, tirets, points, abréviations et fautes de frappe ; `CF`, `C.F.N.` et `Business Planner` sont proposés comme `CFN` avec confiance réduite si le contexte est ambigu. Rejouer un email équivalent et vérifier que `05 - Rechercher connaissances produit` puis `06 - Rediger brouillon contextualise` sont pris avant la création du brouillon. Le test devra ensuite couvrir les autres produits : `CRM 360`, `DMS`, `Digital Invoice`, `Digital Purchase`, `Digital Signature`, `MaxSat`, `MaxLead`, `Remarketing`, `Missive`, `LPN`, `After Sales Planner`, `Website`, `BI 360` et `Nextlane Platform`.
@@ -60,7 +62,7 @@ Les contrôles finaux restent :
 
 Réaliser le test produit ciblé par un email réel, puis vérifier `05 - Rechercher connaissances produit`, `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, le brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Surveiller également le temps de réponse de la connaissance PPTX ; si le blocage se reproduit, réduire ou réindexer les sources documentaires avant de relancer la chaîne. Ne jamais cliquer sur un bouton d’envoi automatique. Dernière modification du tenant : correction des alias AC - Produits enregistrée et publiée le 20 septembre 2026.
 
-Les tests locaux sont actuellement au vert : 15 tests réussis, dont la classification, le nettoyage historique en simulation, l’idempotence, les artefacts Power Platform et les garde-fous de sécurité.
+Les tests locaux sont actuellement au vert : 16 tests réussis, dont la classification, la détection des alias CFN/CF, le nettoyage historique en simulation, l’idempotence, les artefacts Power Platform et les garde-fous de sécurité.
 
 ## Règles à conserver
 
