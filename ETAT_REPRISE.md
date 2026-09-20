@@ -34,11 +34,11 @@ Le test réel du 20 septembre 2026 à 21:09 concernait le message **« devis CFN
 
 L’agent AC - Produits a été renforcé dans Copilot Studio avec un outil Teams en lecture seule pour les messages d’un canal, puis enregistré et publié. Les bases SharePoint produit restent les sources de vérité. Le périmètre Teams doit rester limité aux canaux commerciaux, produits et support autorisés ; ne pas ajouter de lecture des conversations privées ni d’opérations d’écriture.
 
-Le chemin générique de création de brouillon est validé. Il reste à valider séparément le chemin enrichi par connaissances produit et à contrôler l’idempotence sur un même MessageId.
+Le chemin générique de création de brouillon est validé. L’agent AC - Produits est maintenant publié avec une détection tolérante des alias, variantes et fautes produit, notamment `CFN`, `CF`, `C.F.N.` et `Business Planner`. Il reste à valider séparément le chemin enrichi par connaissances produit et à contrôler l’idempotence sur un même MessageId.
 
 ## Prochaine validation ciblée
 
-Corriger ou élargir la préqualification pour reconnaître explicitement `CFN` et `CF` comme le produit `CFN`, puis rejouer un email équivalent. Vérifier que `05 - Rechercher connaissances produit` puis `06 - Rediger brouillon contextualise` sont pris avant la création du brouillon. Le test devra ensuite couvrir les autres produits : `CRM 360`, `DMS`, `Digital Invoice`, `Digital Purchase`, `Digital Signature`, `MaxSat`, `MaxLead`, `Remarketing`, `Missive`, `LPN`, `After Sales Planner`, `Website`, `BI 360` et `Nextlane Platform`.
+La correction de détection a été appliquée et publiée dans AC - Produits. L’agent normalise maintenant accents, casse, espaces, tirets, points, abréviations et fautes de frappe ; `CF`, `C.F.N.` et `Business Planner` sont proposés comme `CFN` avec confiance réduite si le contexte est ambigu. Rejouer un email équivalent et vérifier que `05 - Rechercher connaissances produit` puis `06 - Rediger brouillon contextualise` sont pris avant la création du brouillon. Le test devra ensuite couvrir les autres produits : `CRM 360`, `DMS`, `Digital Invoice`, `Digital Purchase`, `Digital Signature`, `MaxSat`, `MaxLead`, `Remarketing`, `Missive`, `LPN`, `After Sales Planner`, `Website`, `BI 360` et `Nextlane Platform`.
 
 Pour le contrôle d’idempotence, ne pas renvoyer ni retraiter le même `MessageId` sans vérifier d’abord le journal et le comportement prévu du flux.
 
@@ -52,7 +52,7 @@ Les contrôles finaux restent :
 
 ## Prochaine action
 
-Réaliser le test produit ciblé ci-dessus, puis vérifier `05 - Rechercher connaissances produit`, `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, le brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Ne jamais cliquer sur un bouton d’envoi automatique.
+Réaliser le test produit ciblé ci-dessus, puis vérifier `05 - Rechercher connaissances produit`, `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, le brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Ne jamais cliquer sur un bouton d’envoi automatique. Dernière modification du tenant : correction des alias AC - Produits enregistrée et publiée le 20 septembre 2026.
 
 Les tests locaux sont actuellement au vert : 15 tests réussis, dont la classification, le nettoyage historique en simulation, l’idempotence, les artefacts Power Platform et les garde-fous de sécurité.
 
