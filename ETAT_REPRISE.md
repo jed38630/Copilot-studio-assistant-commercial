@@ -50,6 +50,14 @@ Inspection en lecture seule des sources : la bibliothèque `Product` contient no
 
 Une régression locale a été ajoutée dans `scripts/simulate-classification.ts` et `tests/classification.test.ts` : `CFN`, `C.F.N.`, `Business Planner` et `CF` sont reconnus comme le produit `CFN`, avec une confiance réduite pour l’alias court `CF`. La suite locale compte maintenant 16 tests réussis.
 
+## Mise à jour du 20 septembre 2026 : bloc d’analyse allégé
+
+Le nœud `01 - Analyser email et conversation` a été réduit à son rôle d’extraction factuelle. Il transmet désormais uniquement le contexte de l’email, les indicateurs utiles au triage, un JSON minimal et les quatre champs dynamiques Outlook : expéditeur, objet, aperçu et contenu complet.
+
+Les éléments retirés de ce nœud sont les règles de classement et de scoring, la création de brouillon, la rédaction HTML, la signature Outlook, le logo ou les images embarquées, les références CID, la recherche produit et les consignes de réponse. Ces responsabilités restent dans `AC - Triage`, `AC - Produits` et `AC - Rédaction`.
+
+La version simplifiée a été enregistrée et publiée dans Copilot Studio. Le workflow reste publié avec les deux avertissements non bloquants déjà présents. Aucun email n’a été envoyé et aucune source SharePoint n’a été modifiée.
+
 ## Prochaine validation ciblée
 
 La correction de détection a été appliquée et publiée dans AC - Produits. L’agent normalise maintenant accents, casse, espaces, tirets, points, abréviations et fautes de frappe ; `CF`, `C.F.N.` et `Business Planner` sont proposés comme `CFN` avec confiance réduite si le contexte est ambigu. Rejouer un email équivalent et vérifier que `05 - Rechercher connaissances produit` puis `06 - Rediger brouillon contextualise` sont pris avant la création du brouillon. Le test devra ensuite couvrir les autres produits : `CRM 360`, `DMS`, `Digital Invoice`, `Digital Purchase`, `Digital Signature`, `MaxSat`, `MaxLead`, `Remarketing`, `Missive`, `LPN`, `After Sales Planner`, `Website`, `BI 360` et `Nextlane Platform`.
