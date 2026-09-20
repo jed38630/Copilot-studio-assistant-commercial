@@ -28,13 +28,13 @@ Corrections effectuées dans le tenant : l’ancien nœud générique M365 Copil
 
 Un run réel ultérieur a confirmé la chaîne brouillon complète : `08 - Journaliser EmailLog2`, `07 - Parser la decision structuree`, `09 - Decider creation brouillon`, `10 - Creer brouillon Graph`, `11 - Finaliser brouillon Outlook` et `12 - Journaliser DraftLog` ont réussi. Le brouillon a donc bien été créé dans le fil Outlook du message reçu et l’utilisateur l’a retrouvé dans Outlook. Aucun email n’a été envoyé automatiquement.
 
-Le test réel du 20 septembre 2026 à 21:09 a également terminé avec le statut Réussite. Pour ce message, `03 - Routage domaine` a pris la branche Sinon et `04 - Décider si recherche produit` a pris sa branche Sinon ; les agents Produits et Rédaction contextualisée ont donc été ignorés, ce qui est cohérent si le message ne concernait pas un produit identifié. La décision de création de brouillon a néanmoins été prise. La couverture du chemin produit reste à valider avec un email mentionnant explicitement un produit Nextlane.
+Le test réel du 20 septembre 2026 à 21:09 concernait le message **« devis CFN »**, dont le contenu demandait la mise en place du CF. Le run a terminé avec le statut Réussite et a créé un brouillon, mais `03 - Routage domaine` a pris la branche Sinon et `04 - Décider si recherche produit` a pris sa branche Sinon. Les agents Produits et Rédaction contextualisée ont donc été ignorés alors que CFN est bien un produit attendu. Il s’agit d’une anomalie de préqualification ou de détection du produit CFN, à corriger avant de considérer le chemin produit comme validé.
 
 Le chemin générique de création de brouillon est validé. Il reste à valider séparément le chemin enrichi par connaissances produit et à contrôler l’idempotence sur un même MessageId.
 
 ## Prochaine validation ciblée
 
-Envoyer un email de test mentionnant explicitement un produit, par exemple `CRM 360`, `DMS`, `Digital Invoice`, `Digital Purchase`, `Digital Signature`, `MaxSat`, `MaxLead`, `Remarketing`, `Missive`, `LPN`, `CFN`, `After Sales Planner`, `Website`, `BI 360` ou `Nextlane Platform`. Vérifier que `05 - Rechercher connaissances produit` puis `06 - Rediger brouillon contextualise` sont pris avant la création du brouillon.
+Corriger ou élargir la préqualification pour reconnaître explicitement `CFN` et `CF` comme le produit `CFN`, puis rejouer un email équivalent. Vérifier que `05 - Rechercher connaissances produit` puis `06 - Rediger brouillon contextualise` sont pris avant la création du brouillon. Le test devra ensuite couvrir les autres produits : `CRM 360`, `DMS`, `Digital Invoice`, `Digital Purchase`, `Digital Signature`, `MaxSat`, `MaxLead`, `Remarketing`, `Missive`, `LPN`, `After Sales Planner`, `Website`, `BI 360` et `Nextlane Platform`.
 
 Pour le contrôle d’idempotence, ne pas renvoyer ni retraiter le même `MessageId` sans vérifier d’abord le journal et le comportement prévu du flux.
 
