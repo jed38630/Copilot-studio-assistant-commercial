@@ -7,7 +7,7 @@ Dernière mise à jour : 20 septembre 2026
 Assistant Commercial pour traiter la boîte Outlook de Jérémy Druelle avec Copilot Studio, Power Automate, SharePoint, Teams et Microsoft Graph.
 
 - Aucun envoi automatique d’e-mail.
-- Ne jamais demander ni utiliser `Mail.Send`.
+- Ne jamais demander ni utiliser la permission Graph d’envoi.
 - Ne jamais supprimer directement un message.
 - Les messages candidats à la suppression vont uniquement en quarantaine.
 - Les brouillons restent à valider et envoyer manuellement dans Outlook.
@@ -77,7 +77,7 @@ Copier tout le dossier du projet avec ce fichier sur un emplacement sécurisé. 
 
 Sur l’autre ordinateur, les connexions Copilot Studio, Power Automate, Outlook, SharePoint et Teams peuvent demander une reconnexion et une validation administrateur.
 
-Vérifier les permissions Graph : `Mail.ReadWrite`, `User.Read` et éventuellement `offline_access`, sans `Mail.Send`. Vérifier les listes SharePoint EmailLog2 et DraftLog ainsi que les paramètres de routage dans `AssistantCommercial_Settings`.
+Vérifier les permissions Graph autorisées pour la lecture et la gestion des brouillons, sans permission d’envoi. Vérifier les listes SharePoint EmailLog2 et DraftLog ainsi que les paramètres de routage dans `AssistantCommercial_Settings`.
 
 ## Ordre de reprise conseillé
 
@@ -93,4 +93,4 @@ Vérifier les permissions Graph : `Mail.ReadWrite`, `User.Read` et éventuelleme
 
 ## Limites connues
 
-La validation Teams ne doit pas envoyer le message tant que la politique sans `Mail.Send` est conservée. Elle peut journaliser la validation et ouvrir le brouillon Outlook ; l’envoi final reste manuel. Le nettoyage historique doit rester en simulation par défaut. Les destinataires support, facturation et produits doivent rester configurables dans SharePoint, jamais codés en dur.
+La validation Teams ne doit pas envoyer le message tant que la politique sans permission Graph d’envoi est conservée. Elle peut journaliser la validation et ouvrir le brouillon Outlook ; l’envoi final reste manuel. Le nettoyage historique doit rester en simulation par défaut. Les destinataires support, facturation et produits doivent rester configurables dans SharePoint, jamais codés en dur.

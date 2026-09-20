@@ -36,10 +36,12 @@ Ne pas considérer le test comme réussi tant que les étapes suivantes n’ont 
 
 Envoyer un nouvel email de test contrôlé, puis vérifier l’exécution complète de `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, la création du brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Ne jamais cliquer sur un bouton d’envoi automatique.
 
+Les tests locaux sont actuellement au vert : 15 tests réussis, dont la classification, le nettoyage historique en simulation, l’idempotence, les artefacts Power Platform et les garde-fous de sécurité.
+
 ## Règles à conserver
 
 - Aucun envoi automatique.
-- Permission `Mail.Send` interdite.
+- Permission Graph d’envoi interdite.
 - Aucune suppression directe.
 - Quarantaine obligatoire pour les messages à supprimer.
 - Validation et envoi final manuels dans Outlook.
