@@ -1,0 +1,16 @@
+{
+  "id": "msg-publicite-ancienne-001",
+  "conversationId": "conv-publicite-ancienne-001",
+  "receivedDateTime": "2025-09-01T10:00:00Z",
+  "ageEmailJours": 260,
+  "from": {
+    "emailAddress": {
+      "name": "Offres Pro",
+      "address": "promo@offres-pro.example"
+    }
+  },
+  "subject": "Promotion exceptionnelle sur vos outils commerciaux",
+  "bodyPreview": "Publicité ancienne avec offre spéciale expirée.",
+  "hasAttachments": false,
+  "isAdvertisement": true
+}

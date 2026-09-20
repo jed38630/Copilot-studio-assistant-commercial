@@ -1,0 +1,40 @@
+{
+  "table": {
+    "displayName": "AssistantCommercial_HistoricalCleanup",
+    "schemaName": "ac_HistoricalCleanup",
+    "description": "Journal des lots de nettoyage historique de l'Assistant Commercial.",
+    "primaryNameColumn": "ac_name"
+  },
+  "alternateKeys": [
+    {
+      "name": "ac_key_historical_messageid",
+      "columns": [
+        "ac_messageid"
+      ]
+    }
+  ],
+  "columns": [
+    { "name": "MessageId", "schemaName": "ac_messageid", "type": "SingleLine.Text", "required": true },
+    { "name": "ConversationId", "schemaName": "ac_conversationid", "type": "SingleLine.Text" },
+    { "name": "BatchId", "schemaName": "ac_batchid", "type": "SingleLine.Text" },
+    { "name": "DateReception", "schemaName": "ac_datereception", "type": "DateTime" },
+    { "name": "Expediteur", "schemaName": "ac_expediteur", "type": "SingleLine.Email" },
+    { "name": "DomaineExpediteur", "schemaName": "ac_domaineexpediteur", "type": "SingleLine.Text" },
+    { "name": "Objet", "schemaName": "ac_objet", "type": "SingleLine.Text" },
+    { "name": "AgeEmailJours", "schemaName": "ac_ageemailjours", "type": "WholeNumber" },
+    { "name": "Categorie", "schemaName": "ac_categorie", "type": "Choice", "choices": ["Historique - À traiter", "Historique - Opportunité oubliée", "Historique - À surveiller", "Historique - Non important", "Historique - Quarantaine suppression", "Historique - Nettoyé"] },
+    { "name": "ScorePriorite", "schemaName": "ac_scorepriorite", "type": "WholeNumber" },
+    { "name": "ScoreObsolescence", "schemaName": "ac_scoreobsolescence", "type": "WholeNumber" },
+    { "name": "NiveauConfiance", "schemaName": "ac_niveauconfiance", "type": "WholeNumber" },
+    { "name": "Decision", "schemaName": "ac_decision", "type": "MultipleLines.Text" },
+    { "name": "RaisonDecision", "schemaName": "ac_raisondecision", "type": "MultipleLines.Text" },
+    { "name": "ActionEffectuee", "schemaName": "ac_actioneffectuee", "type": "SingleLine.Text" },
+    { "name": "DossierDestination", "schemaName": "ac_dossierdestination", "type": "SingleLine.Text" },
+    { "name": "BrouillonCree", "schemaName": "ac_brouilloncree", "type": "TwoOptions" },
+    { "name": "AlerteTeams", "schemaName": "ac_alerteteams", "type": "TwoOptions" },
+    { "name": "InclureRapportNettoyage", "schemaName": "ac_inclurerapportnettoyage", "type": "TwoOptions" },
+    { "name": "Statut", "schemaName": "ac_statut", "type": "Choice", "choices": ["Simulation", "Déplacé", "Brouillon créé", "À valider", "Erreur", "Ignoré"] },
+    { "name": "DateTraitement", "schemaName": "ac_datetraitement", "type": "DateTime" },
+    { "name": "Erreur", "schemaName": "ac_erreur", "type": "MultipleLines.Text" }
+  ]
+}

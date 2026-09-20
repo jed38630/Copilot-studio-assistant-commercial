@@ -1,0 +1,353 @@
+openapi: 3.0.3
+info:
+  title: Assistant Commercial - Microsoft Graph Outlook
+  version: 1.0.0
+  description: |
+    Connecteur minimal pour Assistant Commercial.
+    Droits autorisés: Mail.ReadWrite, User.Read, offline_access si nécessaire.
+    Droit explicitement interdit: Mail&#46;Send.
+    Ce connecteur lit les emails, crée des dossiers, déplace des messages et crée des brouillons.
+    Il n'expose aucune action d'envoi direct.
+servers:
+  - url: https://graph.microsoft.com/v1.0
+security:
+  - bearerAuth: []
+paths:
+  /users/{userId}/mailFolders:
+    get:
+      operationId: listMailFolders
+      summary: Lister les dossiers Outlook racine
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - name: includeHiddenFolders
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Dossiers retournés
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailFolderCollection'
+    post:
+      operationId: createMailFolder
+      summary: Créer un dossier Outlook racine
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMailFolderRequest'
+      responses:
+        '201':
+          description: Dossier créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailFolder'
+  /users/{userId}/mailFolders/{mailFolderId}/childFolders:
+    post:
+      operationId: createChildMailFolder
+      summary: Créer un sous-dossier Outlook
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - $ref: '#/components/parameters/mailFolderId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMailFolderRequest'
+      responses:
+        '201':
+          description: Sous-dossier créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MailFolder'
+  /users/{userId}/mailFolders/inbox/messages:
+    get:
+      operationId: listInboxMessages
+      summary: Lister les emails de l'Inbox
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - name: $top
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: $select
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: $filter
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: $orderby
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Messages retournés
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageCollection'
+  /users/{userId}/messages/{messageId}:
+    get:
+      operationId: getMessage
+      summary: Lire un email
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - $ref: '#/components/parameters/messageId'
+      responses:
+        '200':
+          description: Message retourné
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+    patch:
+      operationId: updateMessageCategories
+      summary: Mettre à jour les catégories Outlook du message
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - $ref: '#/components/parameters/messageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                categories:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Message mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /users/{userId}/messages/{messageId}/createReply:
+    post:
+      operationId: createReplyDraft
+      summary: Créer un brouillon de réponse dans le fil
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - $ref: '#/components/parameters/messageId'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReplyDraftRequest'
+      responses:
+        '201':
+          description: Brouillon de réponse créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /users/{userId}/messages:
+    post:
+      operationId: createMessageDraft
+      summary: Créer un brouillon autonome dans Outlook
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMessageDraftRequest'
+      responses:
+        '201':
+          description: Brouillon créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+  /users/{userId}/messages/{messageId}/move:
+    post:
+      operationId: moveMessage
+      summary: Déplacer un message vers un dossier Outlook
+      parameters:
+        - $ref: '#/components/parameters/userId'
+        - $ref: '#/components/parameters/messageId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - destinationId
+              properties:
+                destinationId:
+                  type: string
+                  description: ID du dossier destination ou nom de dossier bien connu.
+      responses:
+        '201':
+          description: Message déplacé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID utilisateur ou UPN.
+    messageId:
+      name: messageId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID Graph du message.
+    mailFolderId:
+      name: mailFolderId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID Graph du dossier parent.
+  schemas:
+    MailFolder:
+      type: object
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        parentFolderId:
+          type: string
+        childFolderCount:
+          type: integer
+        unreadItemCount:
+          type: integer
+        totalItemCount:
+          type: integer
+    MailFolderCollection:
+      type: object
+      properties:
+        value:
+          type: array
+          items:
+            $ref: '#/components/schemas/MailFolder'
+        '@odata.nextLink':
+          type: string
+    CreateMailFolderRequest:
+      type: object
+      required:
+        - displayName
+      properties:
+        displayName:
+          type: string
+        isHidden:
+          type: boolean
+          default: false
+    Recipient:
+      type: object
+      properties:
+        emailAddress:
+          type: object
+          properties:
+            name:
+              type: string
+            address:
+              type: string
+    MessageBody:
+      type: object
+      properties:
+        contentType:
+          type: string
+          enum:
+            - Text
+            - HTML
+        content:
+          type: string
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        conversationId:
+          type: string
+        internetMessageId:
+          type: string
+        receivedDateTime:
+          type: string
+          format: date-time
+        subject:
+          type: string
+        bodyPreview:
+          type: string
+        body:
+          $ref: '#/components/schemas/MessageBody'
+        from:
+          $ref: '#/components/schemas/Recipient'
+        hasAttachments:
+          type: boolean
+        webLink:
+          type: string
+        categories:
+          type: array
+          items:
+            type: string
+    MessageCollection:
+      type: object
+      properties:
+        value:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        '@odata.nextLink':
+          type: string
+    CreateReplyDraftRequest:
+      type: object
+      properties:
+        comment:
+          type: string
+        message:
+          type: object
+          properties:
+            body:
+              $ref: '#/components/schemas/MessageBody'
+    CreateMessageDraftRequest:
+      type: object
+      required:
+        - subject
+        - body
+      properties:
+        subject:
+          type: string
+        body:
+          $ref: '#/components/schemas/MessageBody'
+        toRecipients:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipient'

@@ -1,0 +1,78 @@
+{
+  "EnvironmentVariables": [
+    {
+      "SchemaName": "ac_GRAPH_BASE_URL",
+      "Value": "https://graph.microsoft.com/v1.0"
+    },
+    {
+      "SchemaName": "ac_USER_ID_OR_UPN",
+      "Value": "{USER_ID_OR_UPN}"
+    },
+    {
+      "SchemaName": "ac_TENANT_ID",
+      "Value": "{TENANT_ID}"
+    },
+    {
+      "SchemaName": "ac_CLIENT_ID",
+      "Value": "{CLIENT_ID}"
+    },
+    {
+      "SchemaName": "ac_DATAVERSE_ORG_URL",
+      "Value": "https://{environment}.crm.dynamics.com"
+    },
+    {
+      "SchemaName": "ac_TEAMS_WEBHOOK_URL",
+      "Value": "{TEAMS_WEBHOOK_URL}"
+    },
+    {
+      "SchemaName": "ac_COPILOT_REALTIME_ENDPOINT",
+      "Value": "{COPILOT_REALTIME_ENDPOINT}"
+    },
+    {
+      "SchemaName": "ac_COPILOT_HISTORICAL_ENDPOINT",
+      "Value": "{COPILOT_HISTORICAL_ENDPOINT}"
+    },
+    {
+      "SchemaName": "ac_MODE_SIMULATION_HISTORIQUE",
+      "Value": "true"
+    },
+    {
+      "SchemaName": "ac_DEFAULT_TIMEZONE",
+      "Value": "Europe/Paris"
+    }
+  ],
+  "ConnectionReferences": [
+    {
+      "LogicalName": "ac_sharedoffice365",
+      "ConnectionId": "{OFFICE365_CONNECTION_ID}",
+      "ConnectorId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+    }
+  ],
+  "CloudFlows": [
+    {
+      "DisplayName": "AC - 24/7 - Nouvel email entrant",
+      "WorkflowId": "433dfb86-0bc6-472a-932a-bc9ef329e50f",
+      "ImportPayload": "power-platform/dataverse-workflows/AC-247-nouvel-email-entrant.create-workflow.json"
+    },
+    {
+      "DisplayName": "AC - Rattrapage emails récents",
+      "WorkflowId": "bda7800f-820d-43f2-b80b-3917a56e5fbe",
+      "ImportPayload": "power-platform/dataverse-workflows/AC-rattrapage-emails-recents.create-workflow.json"
+    },
+    {
+      "DisplayName": "AC - Nettoyage historique",
+      "WorkflowId": "550702f3-a959-4123-8be6-82fe6ba32921",
+      "ImportPayload": "power-platform/dataverse-workflows/AC-nettoyage-historique.create-workflow.json"
+    },
+    {
+      "DisplayName": "AC - Résumé hebdomadaire commercial",
+      "WorkflowId": "386ce0b4-4c36-423b-af2b-caf2996be562",
+      "ImportPayload": "power-platform/dataverse-workflows/AC-resume-hebdomadaire.create-workflow.json"
+    },
+    {
+      "DisplayName": "AC - Quarantaine expiration",
+      "WorkflowId": "e49d6efe-13a1-4277-8deb-8bdbe506272a",
+      "ImportPayload": "power-platform/dataverse-workflows/AC-quarantaine-expiration.create-workflow.json"
+    }
+  ]
+}

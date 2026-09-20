@@ -1,0 +1,20 @@
+### Créer un brouillon autonome
+POST {{GRAPH_BASE_URL}}/users/{{USER_ID_OR_UPN}}/messages
+Authorization: Bearer {{GRAPH_ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "subject": "{{SUBJECT}}",
+  "body": {
+    "contentType": "HTML",
+    "content": "{{DRAFT_HTML}}"
+  },
+  "toRecipients": [
+    {
+      "emailAddress": {
+        "address": "{{TO_EMAIL}}",
+        "name": "{{TO_NAME}}"
+      }
+    }
+  ]
+}

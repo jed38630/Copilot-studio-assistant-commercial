@@ -1,0 +1,57 @@
+{
+  "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Synthèse hebdomadaire",
+      "weight": "Bolder",
+      "size": "Large",
+      "wrap": true
+    },
+    {
+      "type": "FactSet",
+      "facts": [
+        {
+          "title": "Période",
+          "value": "${periode}"
+        },
+        {
+          "title": "Emails analysés",
+          "value": "${emailsAnalyses}"
+        },
+        {
+          "title": "Brouillons à valider",
+          "value": "${brouillonsAValider}"
+        },
+        {
+          "title": "Emails en attente",
+          "value": "${emailsEnAttente}"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Opportunités commerciales",
+      "weight": "Bolder",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "${opportunitesCommerciales}",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Risques",
+      "weight": "Bolder",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "${risques}",
+      "wrap": true
+    }
+  ]
+}

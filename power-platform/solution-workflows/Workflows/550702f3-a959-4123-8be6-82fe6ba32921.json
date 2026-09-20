@@ -1,0 +1,453 @@
+{
+  "properties": {
+    "apiId": "/providers/Microsoft.ProcessSimple/environments/{ENVIRONMENT_NAME}/flows/AC-nettoyage-historique",
+    "displayName": "AC - Nettoyage historique",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "GRAPH_BASE_URL": {
+          "defaultValue": "https://graph.microsoft.com/v1.0",
+          "type": "String"
+        },
+        "USER_ID_OR_UPN": {
+          "defaultValue": "{USER_ID_OR_UPN}",
+          "type": "String"
+        },
+        "TENANT_ID": {
+          "defaultValue": "{TENANT_ID}",
+          "type": "String"
+        },
+        "CLIENT_ID": {
+          "defaultValue": "{CLIENT_ID}",
+          "type": "String"
+        },
+        "CLIENT_SECRET": {
+          "defaultValue": "{CLIENT_SECRET}",
+          "type": "SecureString"
+        },
+        "DATAVERSE_ORG_URL": {
+          "defaultValue": "https://{environment}.crm.dynamics.com",
+          "type": "String"
+        },
+        "TEAMS_WEBHOOK_URL": {
+          "defaultValue": "{TEAMS_WEBHOOK_URL}",
+          "type": "SecureString"
+        },
+        "COPILOT_REALTIME_ENDPOINT": {
+          "defaultValue": "{COPILOT_REALTIME_ENDPOINT}",
+          "type": "String"
+        },
+        "COPILOT_HISTORICAL_ENDPOINT": {
+          "defaultValue": "{COPILOT_HISTORICAL_ENDPOINT}",
+          "type": "String"
+        },
+        "MODE_SIMULATION_HISTORIQUE": {
+          "defaultValue": true,
+          "type": "Bool"
+        },
+        "DEFAULT_TIMEZONE": {
+          "defaultValue": "Europe/Paris",
+          "type": "String"
+        }
+      },
+      "triggers": {
+        "Manual": {
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "periode": {
+                  "type": "string"
+                },
+                "tailleLot": {
+                  "type": "integer"
+                },
+                "modeSimulation": {
+                  "type": "boolean",
+                  "default": true
+                },
+                "creationBrouillons": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "alertesTeamsGroupees": {
+                  "type": "boolean",
+                  "default": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "actions": {
+        "Initialize_BatchId": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "BatchId",
+                "type": "string",
+                "value": "@guid()"
+              }
+            ]
+          }
+        },
+        "Initialize_ModeSimulation": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "ModeSimulation",
+                "type": "boolean",
+                "value": "@coalesce(triggerBody()?['modeSimulation'], parameters('MODE_SIMULATION_HISTORIQUE'))"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_BatchId": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Initialize_TailleLot": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "TailleLot",
+                "type": "integer",
+                "value": "@coalesce(triggerBody()?['tailleLot'], 50)"
+              }
+            ]
+          },
+          "runAfter": {
+            "Initialize_ModeSimulation": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Graph_List_Inbox_Batch": {
+          "type": "Http",
+          "inputs": {
+            "method": "GET",
+            "uri": "@{concat(parameters('GRAPH_BASE_URL'), '/users/', parameters('USER_ID_OR_UPN'), '/mailFolders/inbox/messages?$top=', variables('TailleLot'), '&$orderby=receivedDateTime asc') }",
+            "headers": {
+              "Accept": "application/json"
+            },
+            "authentication": {
+              "type": "ActiveDirectoryOAuth",
+              "tenant": "@parameters('TENANT_ID')",
+              "audience": "https://graph.microsoft.com",
+              "clientId": "@parameters('CLIENT_ID')",
+              "secret": "@parameters('CLIENT_SECRET')"
+            }
+          },
+          "runtimeConfiguration": {
+            "contentTransfer": {
+              "transferMode": "Chunked"
+            }
+          },
+          "runAfter": {
+            "Initialize_TailleLot": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Apply_To_Each_Historical_Message": {
+          "type": "Foreach",
+          "foreach": "@body('Graph_List_Inbox_Batch')?['value']",
+          "actions": {
+            "Dataverse_Check_Historical_Log": {
+              "type": "Http",
+              "inputs": {
+                "method": "GET",
+                "uri": "@{concat(parameters('DATAVERSE_ORG_URL'), '/api/data/v9.2/ac_historicalcleanups?$select=ac_messageid&$filter=ac_messageid eq ''', items('Apply_To_Each_Historical_Message')?['id'], '''')}",
+                "headers": {
+                  "Accept": "application/json"
+                },
+                "authentication": {
+                  "type": "ActiveDirectoryOAuth",
+                  "tenant": "@parameters('TENANT_ID')",
+                  "audience": "@parameters('DATAVERSE_ORG_URL')",
+                  "clientId": "@parameters('CLIENT_ID')",
+                  "secret": "@parameters('CLIENT_SECRET')"
+                }
+              },
+              "runtimeConfiguration": {
+                "contentTransfer": {
+                  "transferMode": "Chunked"
+                }
+              }
+            },
+            "If_Not_Already_Handled": {
+              "type": "If",
+              "expression": {
+                "equals": [
+                  "@length(coalesce(body('Dataverse_Check_Historical_Log')?['value'], createArray()))",
+                  0
+                ]
+              },
+              "actions": {
+                "Call_Copilot_Historical_Agent": {
+                  "type": "Http",
+                  "inputs": {
+                    "method": "POST",
+                    "uri": "@parameters('COPILOT_HISTORICAL_ENDPOINT')",
+                    "headers": {
+                      "Accept": "application/json",
+                      "Content-Type": "application/json"
+                    },
+                    "authentication": {
+                      "type": "Raw",
+                      "value": "@parameters('CLIENT_SECRET')"
+                    },
+                    "body": {
+                      "batchId": "@variables('BatchId')",
+                      "modeSimulation": "@variables('ModeSimulation')",
+                      "message": "@items('Apply_To_Each_Historical_Message')"
+                    }
+                  },
+                  "runtimeConfiguration": {
+                    "contentTransfer": {
+                      "transferMode": "Chunked"
+                    }
+                  }
+                },
+                "Parse_JSON_Historical_Agent": {
+                  "type": "ParseJson",
+                  "inputs": {
+                    "content": "@body('Call_Copilot_Historical_Agent')",
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "mode": {
+                          "type": "string"
+                        },
+                        "categorie": {
+                          "type": "string"
+                        },
+                        "scorePriorite": {
+                          "type": "integer"
+                        },
+                        "scoreObsolescence": {
+                          "type": "integer"
+                        },
+                        "niveauConfiance": {
+                          "type": "integer"
+                        },
+                        "raisonDecision": {
+                          "type": "string"
+                        },
+                        "actionRecommandee": {
+                          "type": "string"
+                        },
+                        "dossierDestination": {
+                          "type": "string"
+                        },
+                        "brouillonNecessaire": {
+                          "type": "boolean"
+                        },
+                        "alerteTeamsImmediate": {
+                          "type": "boolean"
+                        },
+                        "inclureRapportNettoyage": {
+                          "type": "boolean"
+                        },
+                        "resumeEmail": {
+                          "type": "string"
+                        },
+                        "texteBrouillon": {
+                          "type": "string"
+                        },
+                        "questionPourJeremy": {
+                          "type": "string"
+                        },
+                        "risquesDetectes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "motsClesSensiblesDetectes": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "mode",
+                        "categorie",
+                        "scorePriorite",
+                        "scoreObsolescence",
+                        "niveauConfiance",
+                        "dossierDestination"
+                      ]
+                    }
+                  },
+                  "runAfter": {
+                    "Call_Copilot_Historical_Agent": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "If_Simulation_Mode": {
+                  "type": "If",
+                  "expression": {
+                    "equals": [
+                      "@variables('ModeSimulation')",
+                      true
+                    ]
+                  },
+                  "actions": {
+                    "Compose_Simulation_Only": {
+                      "type": "Compose",
+                      "inputs": "Simulation: aucun déplacement et aucun brouillon."
+                    }
+                  },
+                  "else": {
+                    "actions": {
+                      "Graph_Move_Historical_Message": {
+                        "type": "Http",
+                        "inputs": {
+                          "method": "POST",
+                          "uri": "@{concat(parameters('GRAPH_BASE_URL'), '/users/', parameters('USER_ID_OR_UPN'), '/messages/', items('Apply_To_Each_Historical_Message')?['id'], '/move')}",
+                          "headers": {
+                            "Accept": "application/json",
+                            "Content-Type": "application/json"
+                          },
+                          "authentication": {
+                            "type": "ActiveDirectoryOAuth",
+                            "tenant": "@parameters('TENANT_ID')",
+                            "audience": "https://graph.microsoft.com",
+                            "clientId": "@parameters('CLIENT_ID')",
+                            "secret": "@parameters('CLIENT_SECRET')"
+                          },
+                          "body": {
+                            "destinationId": "@body('Parse_JSON_Historical_Agent')?['dossierDestination']"
+                          }
+                        },
+                        "runtimeConfiguration": {
+                          "contentTransfer": {
+                            "transferMode": "Chunked"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "runAfter": {
+                    "Parse_JSON_Historical_Agent": [
+                      "Succeeded"
+                    ]
+                  }
+                },
+                "Dataverse_Create_Historical_Log": {
+                  "type": "Http",
+                  "inputs": {
+                    "method": "POST",
+                    "uri": "@{concat(parameters('DATAVERSE_ORG_URL'), '/api/data/v9.2/ac_historicalcleanups')}",
+                    "headers": {
+                      "Accept": "application/json",
+                      "Content-Type": "application/json"
+                    },
+                    "authentication": {
+                      "type": "ActiveDirectoryOAuth",
+                      "tenant": "@parameters('TENANT_ID')",
+                      "audience": "@parameters('DATAVERSE_ORG_URL')",
+                      "clientId": "@parameters('CLIENT_ID')",
+                      "secret": "@parameters('CLIENT_SECRET')"
+                    },
+                    "body": {
+                      "ac_messageid": "@items('Apply_To_Each_Historical_Message')?['id']",
+                      "ac_batchid": "@variables('BatchId')",
+                      "ac_categorie": "@body('Parse_JSON_Historical_Agent')?['categorie']",
+                      "ac_scorepriorite": "@body('Parse_JSON_Historical_Agent')?['scorePriorite']",
+                      "ac_scoreobsolescence": "@body('Parse_JSON_Historical_Agent')?['scoreObsolescence']",
+                      "ac_niveauconfiance": "@body('Parse_JSON_Historical_Agent')?['niveauConfiance']",
+                      "ac_raisondecision": "@body('Parse_JSON_Historical_Agent')?['raisonDecision']",
+                      "ac_dossierdestination": "@body('Parse_JSON_Historical_Agent')?['dossierDestination']",
+                      "ac_statut": "@if(variables('ModeSimulation'), 'Simulation', 'Déplacé')",
+                      "ac_datetraitement": "@utcNow()"
+                    }
+                  },
+                  "runtimeConfiguration": {
+                    "contentTransfer": {
+                      "transferMode": "Chunked"
+                    }
+                  },
+                  "runAfter": {
+                    "If_Simulation_Mode": [
+                      "Succeeded"
+                    ]
+                  }
+                }
+              },
+              "else": {
+                "actions": {
+                  "Compose_Historical_Already_Logged": {
+                    "type": "Compose",
+                    "inputs": "MessageId déjà présent dans les logs historiques."
+                  }
+                }
+              },
+              "runAfter": {
+                "Dataverse_Check_Historical_Log": [
+                  "Succeeded"
+                ]
+              }
+            }
+          },
+          "runAfter": {
+            "Graph_List_Inbox_Batch": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Teams_Post_Grouped_Report": {
+          "type": "Http",
+          "inputs": {
+            "method": "POST",
+            "uri": "@parameters('TEAMS_WEBHOOK_URL')",
+            "headers": {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            "authentication": {
+              "type": "Raw",
+              "value": ""
+            },
+            "body": {
+              "type": "message",
+              "text": "@{concat('Rapport nettoyage historique - lot ', variables('BatchId'))}"
+            }
+          },
+          "runtimeConfiguration": {
+            "contentTransfer": {
+              "transferMode": "Chunked"
+            }
+          },
+          "runAfter": {
+            "Apply_To_Each_Historical_Message": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "connectionReferences": {},
+    "flowSuspensionReason": "Importé désactivé par sécurité: configurer les connexions et variables avant activation."
+  },
+  "schemaVersion": "1.0.0.0"
+}

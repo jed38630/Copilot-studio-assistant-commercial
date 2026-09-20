@@ -1,0 +1,9 @@
+### Créer un dossier Outlook racine
+POST {{GRAPH_BASE_URL}}/users/{{USER_ID_OR_UPN}}/mailFolders
+Authorization: Bearer {{GRAPH_ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "displayName": "{{FOLDER_DISPLAY_NAME}}",
+  "isHidden": false
+}

@@ -1,0 +1,8 @@
+### Déplacer un message vers un dossier
+POST {{GRAPH_BASE_URL}}/users/{{USER_ID_OR_UPN}}/messages/{{MESSAGE_ID}}/move
+Authorization: Bearer {{GRAPH_ACCESS_TOKEN}}
+Content-Type: application/json
+
+{
+  "destinationId": "{{DESTINATION_FOLDER_ID}}"
+}

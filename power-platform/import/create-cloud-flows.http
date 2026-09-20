@@ -1,0 +1,39 @@
+### Créer les cloud flows Assistant Commercial via Dataverse Web API
+### Pré-requis: token Dataverse, tables Dataverse créées, connexions et endpoints configurés.
+### Les flows sont importés désactivés fonctionnellement: configurez les paramètres avant activation.
+
+### AC - 24/7 - Nouvel email entrant
+POST {{DATAVERSE_ORG_URL}}/api/data/v9.2/workflows
+Authorization: Bearer {{DATAVERSE_ACCESS_TOKEN}}
+Content-Type: application/json
+
+{{AC-247-nouvel-email-entrant.create-workflow.json}}
+
+### AC - Rattrapage emails récents
+POST {{DATAVERSE_ORG_URL}}/api/data/v9.2/workflows
+Authorization: Bearer {{DATAVERSE_ACCESS_TOKEN}}
+Content-Type: application/json
+
+{{AC-rattrapage-emails-recents.create-workflow.json}}
+
+### AC - Nettoyage historique
+POST {{DATAVERSE_ORG_URL}}/api/data/v9.2/workflows
+Authorization: Bearer {{DATAVERSE_ACCESS_TOKEN}}
+Content-Type: application/json
+
+{{AC-nettoyage-historique.create-workflow.json}}
+
+### AC - Résumé hebdomadaire commercial
+POST {{DATAVERSE_ORG_URL}}/api/data/v9.2/workflows
+Authorization: Bearer {{DATAVERSE_ACCESS_TOKEN}}
+Content-Type: application/json
+
+{{AC-resume-hebdomadaire.create-workflow.json}}
+
+### AC - Quarantaine expiration
+POST {{DATAVERSE_ORG_URL}}/api/data/v9.2/workflows
+Authorization: Bearer {{DATAVERSE_ACCESS_TOKEN}}
+Content-Type: application/json
+
+{{AC-quarantaine-expiration.create-workflow.json}}
+

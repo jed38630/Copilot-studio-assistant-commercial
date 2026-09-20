@@ -1,0 +1,21 @@
+{
+  "id": "msg-ancien-opportunite-001",
+  "conversationId": "conv-ancien-opportunite-001",
+  "receivedDateTime": "2026-02-15T08:00:00Z",
+  "ageEmailJours": 96,
+  "from": {
+    "emailAddress": {
+      "name": "Nadia Leroy",
+      "address": "nadia.leroy@fabrikam.fr"
+    }
+  },
+  "subject": "Relance devis projet régional",
+  "bodyPreview": "Bonjour Jérémy, nous attendons toujours votre devis pour lancer le projet régional. Le besoin reste ouvert.",
+  "hasAttachments": true,
+  "isKnownClient": true,
+  "requiresResponse": true,
+  "unansweredRequest": true,
+  "quoteRequest": true,
+  "commercialImpact": true,
+  "stillRelevant": true
+}

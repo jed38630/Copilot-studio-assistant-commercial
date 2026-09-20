@@ -1,0 +1,33 @@
+{
+  "table": {
+    "displayName": "AssistantCommercial_Settings",
+    "schemaName": "ac_Settings",
+    "description": "Paramètres configurables de l'Assistant Commercial.",
+    "primaryNameColumn": "ac_key"
+  },
+  "alternateKeys": [
+    {
+      "name": "ac_key_settings",
+      "columns": [
+        "ac_key"
+      ]
+    }
+  ],
+  "columns": [
+    { "name": "Key", "schemaName": "ac_key", "type": "SingleLine.Text", "required": true },
+    { "name": "Value", "schemaName": "ac_value", "type": "MultipleLines.Text", "required": true },
+    { "name": "Description", "schemaName": "ac_description", "type": "MultipleLines.Text" }
+  ],
+  "defaultRows": [
+    { "Key": "ModeSimulationHistorique", "Value": "true", "Description": "Démarrage prudent du nettoyage historique." },
+    { "Key": "TailleLotHistorique", "Value": "50", "Description": "Nombre d'emails par lot." },
+    { "Key": "NombreMaxEmailsHistoriqueParJour", "Value": "500", "Description": "Limite quotidienne de traitement historique." },
+    { "Key": "NombreMaxAlertesTeamsParRapport", "Value": "10", "Description": "Limite des éléments prioritaires affichés dans un rapport Teams." },
+    { "Key": "CreationBrouillonsHistorique", "Value": "false", "Description": "Créer des brouillons en historique uniquement après validation." },
+    { "Key": "SeuilPrioriteAlerteTempsReel", "Value": "70", "Description": "Score minimal pour alerte Teams temps réel." },
+    { "Key": "SeuilConfianceQuarantaine", "Value": "85", "Description": "Confiance minimale pour déplacer en quarantaine." },
+    { "Key": "DelaiSuppressionQuarantaineJours", "Value": "30", "Description": "Délai avant rapport de revue humaine." },
+    { "Key": "DomainesClientsConnus", "Value": "[]", "Description": "Liste JSON de domaines clients ou prospects." },
+    { "Key": "MotsClesSensibles", "Value": "[\"résiliation\",\"litige\",\"avocat\",\"contrat\",\"remise exceptionnelle\",\"geste commercial\",\"confidentiel\",\"données bancaires\",\"mot de passe\",\"RIB\",\"plainte\",\"contentieux\",\"facture impayée\",\"pénalité\",\"dénonciation\",\"RGPD\"]", "Description": "Liste JSON de mots-clés déclenchant une validation." }
+  ]
+}

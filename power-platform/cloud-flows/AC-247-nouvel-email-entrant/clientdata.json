@@ -1,0 +1,491 @@
+{
+  "properties": {
+    "apiId": "/providers/Microsoft.ProcessSimple/environments/{ENVIRONMENT_NAME}/flows/AC-247-nouvel-email-entrant",
+    "displayName": "AC - 24/7 - Nouvel email entrant",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "GRAPH_BASE_URL": {
+          "defaultValue": "https://graph.microsoft.com/v1.0",
+          "type": "String"
+        },
+        "USER_ID_OR_UPN": {
+          "defaultValue": "{USER_ID_OR_UPN}",
+          "type": "String"
+        },
+        "TENANT_ID": {
+          "defaultValue": "{TENANT_ID}",
+          "type": "String"
+        },
+        "CLIENT_ID": {
+          "defaultValue": "{CLIENT_ID}",
+          "type": "String"
+        },
+        "CLIENT_SECRET": {
+          "defaultValue": "{CLIENT_SECRET}",
+          "type": "SecureString"
+        },
+        "DATAVERSE_ORG_URL": {
+          "defaultValue": "https://{environment}.crm.dynamics.com",
+          "type": "String"
+        },
+        "TEAMS_WEBHOOK_URL": {
+          "defaultValue": "{TEAMS_WEBHOOK_URL}",
+          "type": "SecureString"
+        },
+        "COPILOT_REALTIME_ENDPOINT": {
+          "defaultValue": "{COPILOT_REALTIME_ENDPOINT}",
+          "type": "String"
+        },
+        "COPILOT_HISTORICAL_ENDPOINT": {
+          "defaultValue": "{COPILOT_HISTORICAL_ENDPOINT}",
+          "type": "String"
+        },
+        "MODE_SIMULATION_HISTORIQUE": {
+          "defaultValue": true,
+          "type": "Bool"
+        },
+        "DEFAULT_TIMEZONE": {
+          "defaultValue": "Europe/Paris",
+          "type": "String"
+        }
+      },
+      "triggers": {
+        "When_a_new_email_arrives_V3": {
+          "type": "OpenApiConnectionNotification",
+          "inputs": {
+            "host": {
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365",
+              "connectionName": "shared_office365",
+              "operationId": "OnNewEmailV3"
+            },
+            "parameters": {
+              "folderPath": "Inbox",
+              "importance": "Any",
+              "fetchOnlyWithAttachment": false,
+              "includeAttachments": false
+            },
+            "authentication": "@parameters('$authentication')"
+          },
+          "splitOn": "@triggerOutputs()?['body/value']"
+        }
+      },
+      "actions": {
+        "Initialize_MessageId": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "MessageId",
+                "type": "string",
+                "value": "@{coalesce(triggerOutputs()?['body/id'], triggerOutputs()?['body/internetMessageId'])}"
+              }
+            ]
+          }
+        },
+        "Graph_Get_Message": {
+          "type": "Http",
+          "inputs": {
+            "method": "GET",
+            "uri": "@{concat(parameters('GRAPH_BASE_URL'), '/users/', parameters('USER_ID_OR_UPN'), '/messages/', variables('MessageId'), '?$select=id,conversationId,internetMessageId,receivedDateTime,from,subject,bodyPreview,body,hasAttachments,webLink,categories')}",
+            "headers": {
+              "Accept": "application/json"
+            },
+            "authentication": {
+              "type": "ActiveDirectoryOAuth",
+              "tenant": "@parameters('TENANT_ID')",
+              "audience": "https://graph.microsoft.com",
+              "clientId": "@parameters('CLIENT_ID')",
+              "secret": "@parameters('CLIENT_SECRET')"
+            }
+          },
+          "runtimeConfiguration": {
+            "contentTransfer": {
+              "transferMode": "Chunked"
+            }
+          },
+          "runAfter": {
+            "Initialize_MessageId": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Dataverse_Check_EmailLog": {
+          "type": "Http",
+          "inputs": {
+            "method": "GET",
+            "uri": "@{concat(parameters('DATAVERSE_ORG_URL'), '/api/data/v9.2/ac_emaillogs?$select=ac_messageid&$filter=ac_messageid eq ''', variables('MessageId'), '''')}",
+            "headers": {
+              "Accept": "application/json"
+            },
+            "authentication": {
+              "type": "ActiveDirectoryOAuth",
+              "tenant": "@parameters('TENANT_ID')",
+              "audience": "@parameters('DATAVERSE_ORG_URL')",
+              "clientId": "@parameters('CLIENT_ID')",
+              "secret": "@parameters('CLIENT_SECRET')"
+            }
+          },
+          "runtimeConfiguration": {
+            "contentTransfer": {
+              "transferMode": "Chunked"
+            }
+          },
+          "runAfter": {
+            "Graph_Get_Message": [
+              "Succeeded"
+            ]
+          }
+        },
+        "If_Message_Already_Logged": {
+          "type": "If",
+          "expression": {
+            "greater": [
+              "@length(coalesce(body('Dataverse_Check_EmailLog')?['value'], createArray()))",
+              0
+            ]
+          },
+          "actions": {
+            "Terminate_Already_Processed": {
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Succeeded",
+                "runError": {
+                  "code": "AlreadyProcessed",
+                  "message": "MessageId déjà journalisé."
+                }
+              }
+            }
+          },
+          "else": {
+            "actions": {
+              "Call_Copilot_Realtime_Agent": {
+                "type": "Http",
+                "inputs": {
+                  "method": "POST",
+                  "uri": "@parameters('COPILOT_REALTIME_ENDPOINT')",
+                  "headers": {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                  },
+                  "authentication": {
+                    "type": "Raw",
+                    "value": "@parameters('CLIENT_SECRET')"
+                  },
+                  "body": {
+                    "message": "@body('Graph_Get_Message')",
+                    "mode": "realtime"
+                  }
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
+              },
+              "Parse_JSON_Agent": {
+                "type": "ParseJson",
+                "inputs": {
+                  "content": "@body('Call_Copilot_Realtime_Agent')",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "mode": {
+                        "type": "string"
+                      },
+                      "categorie": {
+                        "type": "string"
+                      },
+                      "scorePriorite": {
+                        "type": "integer"
+                      },
+                      "niveauConfiance": {
+                        "type": "integer"
+                      },
+                      "raisonDecision": {
+                        "type": "string"
+                      },
+                      "actionRecommandee": {
+                        "type": "string"
+                      },
+                      "dossierDestination": {
+                        "type": "string"
+                      },
+                      "brouillonNecessaire": {
+                        "type": "boolean"
+                      },
+                      "alerteTeamsNecessaire": {
+                        "type": "boolean"
+                      },
+                      "questionTeamsNecessaire": {
+                        "type": "boolean"
+                      },
+                      "resumeEmail": {
+                        "type": "string"
+                      },
+                      "texteBrouillon": {
+                        "type": "string"
+                      },
+                      "questionTeams": {
+                        "type": "string"
+                      },
+                      "risquesDetectes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "motsClesSensiblesDetectes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [
+                      "mode",
+                      "categorie",
+                      "scorePriorite",
+                      "niveauConfiance",
+                      "dossierDestination",
+                      "brouillonNecessaire"
+                    ]
+                  }
+                },
+                "runAfter": {
+                  "Call_Copilot_Realtime_Agent": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Compose_Dossier_Destination_Final": {
+                "type": "Compose",
+                "inputs": "@if(less(int(body('Parse_JSON_Agent')?['niveauConfiance']), 80), '04 - À surveiller', body('Parse_JSON_Agent')?['dossierDestination'])",
+                "runAfter": {
+                  "Parse_JSON_Agent": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "If_Create_Draft": {
+                "type": "If",
+                "expression": {
+                  "equals": [
+                    "@body('Parse_JSON_Agent')?['brouillonNecessaire']",
+                    true
+                  ]
+                },
+                "actions": {
+                  "Graph_Create_Reply_Draft": {
+                    "type": "Http",
+                    "inputs": {
+                      "method": "POST",
+                      "uri": "@{concat(parameters('GRAPH_BASE_URL'), '/users/', parameters('USER_ID_OR_UPN'), '/messages/', variables('MessageId'), '/createReply')}",
+                      "headers": {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                      },
+                      "authentication": {
+                        "type": "ActiveDirectoryOAuth",
+                        "tenant": "@parameters('TENANT_ID')",
+                        "audience": "https://graph.microsoft.com",
+                        "clientId": "@parameters('CLIENT_ID')",
+                        "secret": "@parameters('CLIENT_SECRET')"
+                      },
+                      "body": {
+                        "message": {
+                          "body": {
+                            "contentType": "HTML",
+                            "content": "@body('Parse_JSON_Agent')?['texteBrouillon']"
+                          }
+                        }
+                      }
+                    },
+                    "runtimeConfiguration": {
+                      "contentTransfer": {
+                        "transferMode": "Chunked"
+                      }
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Compose_No_Draft": {
+                      "type": "Compose",
+                      "inputs": "Aucun brouillon requis."
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Compose_Dossier_Destination_Final": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Graph_Move_Message": {
+                "type": "Http",
+                "inputs": {
+                  "method": "POST",
+                  "uri": "@{concat(parameters('GRAPH_BASE_URL'), '/users/', parameters('USER_ID_OR_UPN'), '/messages/', variables('MessageId'), '/move')}",
+                  "headers": {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                  },
+                  "authentication": {
+                    "type": "ActiveDirectoryOAuth",
+                    "tenant": "@parameters('TENANT_ID')",
+                    "audience": "https://graph.microsoft.com",
+                    "clientId": "@parameters('CLIENT_ID')",
+                    "secret": "@parameters('CLIENT_SECRET')"
+                  },
+                  "body": {
+                    "destinationId": "@outputs('Compose_Dossier_Destination_Final')"
+                  }
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                },
+                "runAfter": {
+                  "If_Create_Draft": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "If_Teams_Alert": {
+                "type": "If",
+                "expression": {
+                  "or": [
+                    {
+                      "equals": [
+                        "@body('Parse_JSON_Agent')?['alerteTeamsNecessaire']",
+                        true
+                      ]
+                    },
+                    {
+                      "equals": [
+                        "@body('Parse_JSON_Agent')?['questionTeamsNecessaire']",
+                        true
+                      ]
+                    }
+                  ]
+                },
+                "actions": {
+                  "Teams_Post_Adaptive_Card_Webhook": {
+                    "type": "Http",
+                    "inputs": {
+                      "method": "POST",
+                      "uri": "@parameters('TEAMS_WEBHOOK_URL')",
+                      "headers": {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                      },
+                      "authentication": {
+                        "type": "Raw",
+                        "value": ""
+                      },
+                      "body": {
+                        "type": "message",
+                        "attachments": [
+                          {
+                            "contentType": "application/vnd.microsoft.card.adaptive",
+                            "content": "@body('Parse_JSON_Agent')"
+                          }
+                        ]
+                      }
+                    },
+                    "runtimeConfiguration": {
+                      "contentTransfer": {
+                        "transferMode": "Chunked"
+                      }
+                    }
+                  }
+                },
+                "else": {
+                  "actions": {
+                    "Compose_No_Teams_Alert": {
+                      "type": "Compose",
+                      "inputs": "Aucune alerte Teams nécessaire."
+                    }
+                  }
+                },
+                "runAfter": {
+                  "Graph_Move_Message": [
+                    "Succeeded"
+                  ]
+                }
+              },
+              "Dataverse_Create_EmailLog": {
+                "type": "Http",
+                "inputs": {
+                  "method": "POST",
+                  "uri": "@{concat(parameters('DATAVERSE_ORG_URL'), '/api/data/v9.2/ac_emaillogs')}",
+                  "headers": {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                  },
+                  "authentication": {
+                    "type": "ActiveDirectoryOAuth",
+                    "tenant": "@parameters('TENANT_ID')",
+                    "audience": "@parameters('DATAVERSE_ORG_URL')",
+                    "clientId": "@parameters('CLIENT_ID')",
+                    "secret": "@parameters('CLIENT_SECRET')"
+                  },
+                  "body": {
+                    "ac_messageid": "@variables('MessageId')",
+                    "ac_conversationid": "@body('Graph_Get_Message')?['conversationId']",
+                    "ac_categorie": "@body('Parse_JSON_Agent')?['categorie']",
+                    "ac_scorepriorite": "@body('Parse_JSON_Agent')?['scorePriorite']",
+                    "ac_niveauconfiance": "@body('Parse_JSON_Agent')?['niveauConfiance']",
+                    "ac_raisondecision": "@body('Parse_JSON_Agent')?['raisonDecision']",
+                    "ac_dossierdestination": "@outputs('Compose_Dossier_Destination_Final')",
+                    "ac_brouilloncree": "@body('Parse_JSON_Agent')?['brouillonNecessaire']",
+                    "ac_teamsalerteenvoyee": "@or(body('Parse_JSON_Agent')?['alerteTeamsNecessaire'], body('Parse_JSON_Agent')?['questionTeamsNecessaire'])",
+                    "ac_datetraitement": "@utcNow()"
+                  }
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                },
+                "runAfter": {
+                  "If_Teams_Alert": [
+                    "Succeeded"
+                  ]
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Dataverse_Check_EmailLog": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "connectionReferences": {
+      "shared_office365": {
+        "connectionName": "{CONNECTION_OFFICE365}",
+        "source": "Invoker",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_office365",
+        "tier": "Standard",
+        "apiName": "office365"
+      }
+    },
+    "flowSuspensionReason": "Importé désactivé par sécurité: configurer les connexions et variables avant activation."
+  },
+  "schemaVersion": "1.0.0.0"
+}

@@ -1,0 +1,4 @@
+### Lister les dossiers Outlook racine
+GET {{GRAPH_BASE_URL}}/users/{{USER_ID_OR_UPN}}/mailFolders?includeHiddenFolders=false
+Authorization: Bearer {{GRAPH_ACCESS_TOKEN}}
+Accept: application/json

@@ -1,0 +1,4 @@
+### Lister les emails de l'Inbox
+GET {{GRAPH_BASE_URL}}/users/{{USER_ID_OR_UPN}}/mailFolders/inbox/messages?$top={{TOP}}&$select=id,conversationId,internetMessageId,receivedDateTime,from,subject,bodyPreview,body,hasAttachments,webLink,categories&$orderby=receivedDateTime desc
+Authorization: Bearer {{GRAPH_ACCESS_TOKEN}}
+Accept: application/json

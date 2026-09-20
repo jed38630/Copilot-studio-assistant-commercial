@@ -1,0 +1,16 @@
+{
+  "id": "msg-notification-auto-001",
+  "conversationId": "conv-notification-auto-001",
+  "receivedDateTime": "2026-04-10T12:00:00Z",
+  "ageEmailJours": 42,
+  "from": {
+    "emailAddress": {
+      "name": "Notification Service",
+      "address": "no-reply@service.example"
+    }
+  },
+  "subject": "Notification automatique de synchronisation",
+  "bodyPreview": "Ceci est une notification automatique. Merci de ne pas répondre.",
+  "hasAttachments": false,
+  "isAutomatic": true
+}

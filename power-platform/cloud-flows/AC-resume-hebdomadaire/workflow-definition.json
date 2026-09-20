@@ -1,0 +1,183 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    },
+    "$connections": {
+      "defaultValue": {},
+      "type": "Object"
+    },
+    "GRAPH_BASE_URL": {
+      "defaultValue": "https://graph.microsoft.com/v1.0",
+      "type": "String"
+    },
+    "USER_ID_OR_UPN": {
+      "defaultValue": "{USER_ID_OR_UPN}",
+      "type": "String"
+    },
+    "TENANT_ID": {
+      "defaultValue": "{TENANT_ID}",
+      "type": "String"
+    },
+    "CLIENT_ID": {
+      "defaultValue": "{CLIENT_ID}",
+      "type": "String"
+    },
+    "CLIENT_SECRET": {
+      "defaultValue": "{CLIENT_SECRET}",
+      "type": "SecureString"
+    },
+    "DATAVERSE_ORG_URL": {
+      "defaultValue": "https://{environment}.crm.dynamics.com",
+      "type": "String"
+    },
+    "TEAMS_WEBHOOK_URL": {
+      "defaultValue": "{TEAMS_WEBHOOK_URL}",
+      "type": "SecureString"
+    },
+    "COPILOT_REALTIME_ENDPOINT": {
+      "defaultValue": "{COPILOT_REALTIME_ENDPOINT}",
+      "type": "String"
+    },
+    "COPILOT_HISTORICAL_ENDPOINT": {
+      "defaultValue": "{COPILOT_HISTORICAL_ENDPOINT}",
+      "type": "String"
+    },
+    "MODE_SIMULATION_HISTORIQUE": {
+      "defaultValue": true,
+      "type": "Bool"
+    },
+    "DEFAULT_TIMEZONE": {
+      "defaultValue": "Europe/Paris",
+      "type": "String"
+    }
+  },
+  "triggers": {
+    "Recurrence": {
+      "type": "Recurrence",
+      "recurrence": {
+        "frequency": "Week",
+        "interval": 1,
+        "schedule": {
+          "hours": [
+            "8"
+          ],
+          "minutes": [
+            0
+          ],
+          "weekDays": [
+            "Monday"
+          ]
+        },
+        "timeZone": "Romance Standard Time"
+      }
+    }
+  },
+  "actions": {
+    "Compose_Date_Depuis": {
+      "type": "Compose",
+      "inputs": "@formatDateTime(addDays(utcNow(), -7), 'yyyy-MM-ddTHH:mm:ssZ')"
+    },
+    "Dataverse_Read_EmailLog": {
+      "type": "Http",
+      "inputs": {
+        "method": "GET",
+        "uri": "@{concat(parameters('DATAVERSE_ORG_URL'), '/api/data/v9.2/ac_emaillogs?$filter=ac_datetraitement ge ', outputs('Compose_Date_Depuis'))}",
+        "headers": {
+          "Accept": "application/json"
+        },
+        "authentication": {
+          "type": "ActiveDirectoryOAuth",
+          "tenant": "@parameters('TENANT_ID')",
+          "audience": "@parameters('DATAVERSE_ORG_URL')",
+          "clientId": "@parameters('CLIENT_ID')",
+          "secret": "@parameters('CLIENT_SECRET')"
+        }
+      },
+      "runtimeConfiguration": {
+        "contentTransfer": {
+          "transferMode": "Chunked"
+        }
+      },
+      "runAfter": {
+        "Compose_Date_Depuis": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Dataverse_Read_Historical_Log": {
+      "type": "Http",
+      "inputs": {
+        "method": "GET",
+        "uri": "@{concat(parameters('DATAVERSE_ORG_URL'), '/api/data/v9.2/ac_historicalcleanups?$filter=ac_datetraitement ge ', outputs('Compose_Date_Depuis'))}",
+        "headers": {
+          "Accept": "application/json"
+        },
+        "authentication": {
+          "type": "ActiveDirectoryOAuth",
+          "tenant": "@parameters('TENANT_ID')",
+          "audience": "@parameters('DATAVERSE_ORG_URL')",
+          "clientId": "@parameters('CLIENT_ID')",
+          "secret": "@parameters('CLIENT_SECRET')"
+        }
+      },
+      "runtimeConfiguration": {
+        "contentTransfer": {
+          "transferMode": "Chunked"
+        }
+      },
+      "runAfter": {
+        "Dataverse_Read_EmailLog": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Compose_Weekly_Summary": {
+      "type": "Compose",
+      "inputs": {
+        "periode": "7 derniers jours",
+        "emailsTempsReel": "@length(coalesce(body('Dataverse_Read_EmailLog')?['value'], createArray()))",
+        "emailsHistoriques": "@length(coalesce(body('Dataverse_Read_Historical_Log')?['value'], createArray()))",
+        "note": "Synthèse à enrichir dans Teams avec la carte teams/adaptive-cards/resume-hebdomadaire.json."
+      },
+      "runAfter": {
+        "Dataverse_Read_Historical_Log": [
+          "Succeeded"
+        ]
+      }
+    },
+    "Teams_Post_Weekly_Summary": {
+      "type": "Http",
+      "inputs": {
+        "method": "POST",
+        "uri": "@parameters('TEAMS_WEBHOOK_URL')",
+        "headers": {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        "authentication": {
+          "type": "Raw",
+          "value": ""
+        },
+        "body": {
+          "type": "message",
+          "text": "@string(outputs('Compose_Weekly_Summary'))"
+        }
+      },
+      "runtimeConfiguration": {
+        "contentTransfer": {
+          "transferMode": "Chunked"
+        }
+      },
+      "runAfter": {
+        "Compose_Weekly_Summary": [
+          "Succeeded"
+        ]
+      }
+    }
+  },
+  "outputs": {}
+}

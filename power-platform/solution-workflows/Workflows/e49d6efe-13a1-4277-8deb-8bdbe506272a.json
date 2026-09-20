@@ -1,0 +1,180 @@
+{
+  "properties": {
+    "apiId": "/providers/Microsoft.ProcessSimple/environments/{ENVIRONMENT_NAME}/flows/AC-quarantaine-expiration",
+    "displayName": "AC - Quarantaine expiration",
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "GRAPH_BASE_URL": {
+          "defaultValue": "https://graph.microsoft.com/v1.0",
+          "type": "String"
+        },
+        "USER_ID_OR_UPN": {
+          "defaultValue": "{USER_ID_OR_UPN}",
+          "type": "String"
+        },
+        "TENANT_ID": {
+          "defaultValue": "{TENANT_ID}",
+          "type": "String"
+        },
+        "CLIENT_ID": {
+          "defaultValue": "{CLIENT_ID}",
+          "type": "String"
+        },
+        "CLIENT_SECRET": {
+          "defaultValue": "{CLIENT_SECRET}",
+          "type": "SecureString"
+        },
+        "DATAVERSE_ORG_URL": {
+          "defaultValue": "https://{environment}.crm.dynamics.com",
+          "type": "String"
+        },
+        "TEAMS_WEBHOOK_URL": {
+          "defaultValue": "{TEAMS_WEBHOOK_URL}",
+          "type": "SecureString"
+        },
+        "COPILOT_REALTIME_ENDPOINT": {
+          "defaultValue": "{COPILOT_REALTIME_ENDPOINT}",
+          "type": "String"
+        },
+        "COPILOT_HISTORICAL_ENDPOINT": {
+          "defaultValue": "{COPILOT_HISTORICAL_ENDPOINT}",
+          "type": "String"
+        },
+        "MODE_SIMULATION_HISTORIQUE": {
+          "defaultValue": true,
+          "type": "Bool"
+        },
+        "DEFAULT_TIMEZONE": {
+          "defaultValue": "Europe/Paris",
+          "type": "String"
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "type": "Recurrence",
+          "recurrence": {
+            "frequency": "Day",
+            "interval": 1
+          }
+        }
+      },
+      "actions": {
+        "Compose_Date_Seuil": {
+          "type": "Compose",
+          "inputs": "@formatDateTime(addDays(utcNow(), -30), 'yyyy-MM-ddTHH:mm:ssZ')"
+        },
+        "Dataverse_Read_Realtime_Quarantine": {
+          "type": "Http",
+          "inputs": {
+            "method": "GET",
+            "uri": "@{concat(parameters('DATAVERSE_ORG_URL'), '/api/data/v9.2/ac_emaillogs?$filter=ac_dossierdestination eq ''06 - À supprimer - quarantaine'' and ac_datetraitement le ', outputs('Compose_Date_Seuil'))}",
+            "headers": {
+              "Accept": "application/json"
+            },
+            "authentication": {
+              "type": "ActiveDirectoryOAuth",
+              "tenant": "@parameters('TENANT_ID')",
+              "audience": "@parameters('DATAVERSE_ORG_URL')",
+              "clientId": "@parameters('CLIENT_ID')",
+              "secret": "@parameters('CLIENT_SECRET')"
+            }
+          },
+          "runtimeConfiguration": {
+            "contentTransfer": {
+              "transferMode": "Chunked"
+            }
+          },
+          "runAfter": {
+            "Compose_Date_Seuil": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Dataverse_Read_Historical_Quarantine": {
+          "type": "Http",
+          "inputs": {
+            "method": "GET",
+            "uri": "@{concat(parameters('DATAVERSE_ORG_URL'), '/api/data/v9.2/ac_historicalcleanups?$filter=ac_dossierdestination eq ''Historique - Quarantaine suppression'' and ac_datetraitement le ', outputs('Compose_Date_Seuil'))}",
+            "headers": {
+              "Accept": "application/json"
+            },
+            "authentication": {
+              "type": "ActiveDirectoryOAuth",
+              "tenant": "@parameters('TENANT_ID')",
+              "audience": "@parameters('DATAVERSE_ORG_URL')",
+              "clientId": "@parameters('CLIENT_ID')",
+              "secret": "@parameters('CLIENT_SECRET')"
+            }
+          },
+          "runtimeConfiguration": {
+            "contentTransfer": {
+              "transferMode": "Chunked"
+            }
+          },
+          "runAfter": {
+            "Dataverse_Read_Realtime_Quarantine": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Compose_Quarantine_Report": {
+          "type": "Compose",
+          "inputs": {
+            "titre": "Rapport quarantaine à revue humaine",
+            "tempsReel": "@length(coalesce(body('Dataverse_Read_Realtime_Quarantine')?['value'], createArray()))",
+            "historique": "@length(coalesce(body('Dataverse_Read_Historical_Quarantine')?['value'], createArray()))",
+            "note": "Aucune suppression directe n’est effectuée par ce flow."
+          },
+          "runAfter": {
+            "Dataverse_Read_Historical_Quarantine": [
+              "Succeeded"
+            ]
+          }
+        },
+        "Teams_Post_Quarantine_Report": {
+          "type": "Http",
+          "inputs": {
+            "method": "POST",
+            "uri": "@parameters('TEAMS_WEBHOOK_URL')",
+            "headers": {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            "authentication": {
+              "type": "Raw",
+              "value": ""
+            },
+            "body": {
+              "type": "message",
+              "text": "@string(outputs('Compose_Quarantine_Report'))"
+            }
+          },
+          "runtimeConfiguration": {
+            "contentTransfer": {
+              "transferMode": "Chunked"
+            }
+          },
+          "runAfter": {
+            "Compose_Quarantine_Report": [
+              "Succeeded"
+            ]
+          }
+        }
+      },
+      "outputs": {}
+    },
+    "connectionReferences": {},
+    "flowSuspensionReason": "Importé désactivé par sécurité: configurer les connexions et variables avant activation."
+  },
+  "schemaVersion": "1.0.0.0"
+}

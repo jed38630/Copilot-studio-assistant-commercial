@@ -1,0 +1,90 @@
+{
+  "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "📩 Email important détecté",
+      "weight": "Bolder",
+      "size": "Large",
+      "wrap": true
+    },
+    {
+      "type": "FactSet",
+      "facts": [
+        {
+          "title": "Expéditeur",
+          "value": "${expediteur}"
+        },
+        {
+          "title": "Objet",
+          "value": "${objet}"
+        },
+        {
+          "title": "Score",
+          "value": "${scorePriorite}"
+        },
+        {
+          "title": "Action proposée",
+          "value": "${actionProposee}"
+        },
+        {
+          "title": "Email",
+          "value": "[Ouvrir](${lienEmail})"
+        },
+        {
+          "title": "Brouillon",
+          "value": "${lienBrouillon}"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "${resumeEmail}",
+      "wrap": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Je vais traiter",
+      "data": {
+        "assistantCommercialAction": "jeremy_will_handle",
+        "messageId": "${messageId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Modifier le ton du brouillon",
+      "data": {
+        "assistantCommercialAction": "revise_draft_tone",
+        "messageId": "${messageId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Classer sans répondre",
+      "data": {
+        "assistantCommercialAction": "classify_without_reply",
+        "messageId": "${messageId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "À surveiller",
+      "data": {
+        "assistantCommercialAction": "move_to_watch",
+        "messageId": "${messageId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Question complémentaire",
+      "data": {
+        "assistantCommercialAction": "ask_followup_question",
+        "messageId": "${messageId}"
+      }
+    }
+  ]
+}

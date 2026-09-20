@@ -1,0 +1,39 @@
+{
+  "table": {
+    "displayName": "AssistantCommercial_EmailLog",
+    "schemaName": "ac_EmailLog",
+    "description": "Journal des décisions du mode temps réel de l'Assistant Commercial.",
+    "primaryNameColumn": "ac_name"
+  },
+  "alternateKeys": [
+    {
+      "name": "ac_key_messageid",
+      "columns": [
+        "ac_messageid"
+      ]
+    }
+  ],
+  "columns": [
+    { "name": "MessageId", "schemaName": "ac_messageid", "type": "SingleLine.Text", "required": true },
+    { "name": "ConversationId", "schemaName": "ac_conversationid", "type": "SingleLine.Text" },
+    { "name": "DateReception", "schemaName": "ac_datereception", "type": "DateTime" },
+    { "name": "Expediteur", "schemaName": "ac_expediteur", "type": "SingleLine.Email" },
+    { "name": "DomaineExpediteur", "schemaName": "ac_domaineexpediteur", "type": "SingleLine.Text" },
+    { "name": "Objet", "schemaName": "ac_objet", "type": "SingleLine.Text" },
+    { "name": "Categorie", "schemaName": "ac_categorie", "type": "Choice", "choices": ["Important - réponse nécessaire", "Important - question à poser", "À surveiller", "Information utile", "Non important", "Newsletter / publicité", "Quarantaine suppression"] },
+    { "name": "ScorePriorite", "schemaName": "ac_scorepriorite", "type": "WholeNumber" },
+    { "name": "NiveauConfiance", "schemaName": "ac_niveauconfiance", "type": "WholeNumber" },
+    { "name": "Decision", "schemaName": "ac_decision", "type": "MultipleLines.Text" },
+    { "name": "RaisonDecision", "schemaName": "ac_raisondecision", "type": "MultipleLines.Text" },
+    { "name": "ActionEffectuee", "schemaName": "ac_actioneffectuee", "type": "SingleLine.Text" },
+    { "name": "DossierDestination", "schemaName": "ac_dossierdestination", "type": "SingleLine.Text" },
+    { "name": "BrouillonCree", "schemaName": "ac_brouilloncree", "type": "TwoOptions" },
+    { "name": "BrouillonId", "schemaName": "ac_brouillonid", "type": "SingleLine.Text" },
+    { "name": "LienEmail", "schemaName": "ac_lienemail", "type": "SingleLine.URL" },
+    { "name": "LienBrouillon", "schemaName": "ac_lienbrouillon", "type": "SingleLine.URL" },
+    { "name": "TeamsAlerteEnvoyee", "schemaName": "ac_teamsalerteenvoyee", "type": "TwoOptions" },
+    { "name": "StatutValidation", "schemaName": "ac_statutvalidation", "type": "Choice", "choices": ["Non requis", "En attente", "Validé", "Refusé", "À revoir"] },
+    { "name": "DateTraitement", "schemaName": "ac_datetraitement", "type": "DateTime" },
+    { "name": "Erreur", "schemaName": "ac_erreur", "type": "MultipleLines.Text" }
+  ]
+}

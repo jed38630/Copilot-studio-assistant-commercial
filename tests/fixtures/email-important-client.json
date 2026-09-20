@@ -1,0 +1,18 @@
+{
+  "id": "msg-important-client-001",
+  "conversationId": "conv-important-client-001",
+  "receivedDateTime": "2026-05-22T08:30:00Z",
+  "from": {
+    "emailAddress": {
+      "name": "Claire Martin",
+      "address": "claire.martin@client-alpha.fr"
+    }
+  },
+  "subject": "Validation urgente de la proposition commerciale",
+  "bodyPreview": "Bonjour Jérémy, peux-tu me confirmer aujourd'hui les conditions de la proposition pour que nous validions la commande ?",
+  "hasAttachments": true,
+  "isKnownClient": true,
+  "requiresResponse": true,
+  "commercialImpact": true,
+  "urgent": true
+}

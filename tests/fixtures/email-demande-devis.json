@@ -1,0 +1,19 @@
+{
+  "id": "msg-demande-devis-001",
+  "conversationId": "conv-demande-devis-001",
+  "receivedDateTime": "2026-05-22T09:45:00Z",
+  "from": {
+    "emailAddress": {
+      "name": "Sophie Bernard",
+      "address": "sophie.bernard@contoso.com"
+    }
+  },
+  "subject": "Demande de devis pour 25 licences",
+  "bodyPreview": "Bonjour Jérémy, pouvez-vous m'envoyer un devis pour 25 licences avec une proposition avant vendredi ?",
+  "hasAttachments": false,
+  "isKnownClient": true,
+  "requiresResponse": true,
+  "quoteRequest": true,
+  "commercialImpact": true,
+  "urgent": true
+}

@@ -1,0 +1,15 @@
+{
+  "id": "msg-newsletter-001",
+  "conversationId": "conv-newsletter-001",
+  "receivedDateTime": "2026-05-22T07:00:00Z",
+  "from": {
+    "emailAddress": {
+      "name": "Marketing Digest",
+      "address": "newsletter@marketing-example.com"
+    }
+  },
+  "subject": "Newsletter hebdomadaire - tendances commerciales",
+  "bodyPreview": "Votre digest de la semaine. Unsubscribe disponible en bas de page.",
+  "hasAttachments": false,
+  "isNewsletter": true
+}

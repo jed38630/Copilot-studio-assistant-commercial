@@ -1,0 +1,96 @@
+{
+  "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "Rapport nettoyage historique",
+      "weight": "Bolder",
+      "size": "Large",
+      "wrap": true
+    },
+    {
+      "type": "FactSet",
+      "facts": [
+        {
+          "title": "Emails analysés",
+          "value": "${emailsAnalyses}"
+        },
+        {
+          "title": "Emails importants",
+          "value": "${emailsImportants}"
+        },
+        {
+          "title": "Opportunités oubliées",
+          "value": "${opportunitesOubliees}"
+        },
+        {
+          "title": "À surveiller",
+          "value": "${aSurveiller}"
+        },
+        {
+          "title": "Non importants",
+          "value": "${nonImportants}"
+        },
+        {
+          "title": "Quarantaine",
+          "value": "${quarantaine}"
+        }
+      ]
+    },
+    {
+      "type": "TextBlock",
+      "text": "Top 10 à vérifier",
+      "weight": "Bolder",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "${top10AVerifier}",
+      "wrap": true
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Continuer prochain lot",
+      "data": {
+        "assistantCommercialAction": "continue_next_batch",
+        "batchId": "${batchId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Stopper nettoyage",
+      "data": {
+        "assistantCommercialAction": "stop_cleanup",
+        "batchId": "${batchId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Passer en simulation",
+      "data": {
+        "assistantCommercialAction": "switch_to_simulation",
+        "batchId": "${batchId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Passer en production",
+      "data": {
+        "assistantCommercialAction": "switch_to_production",
+        "batchId": "${batchId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Modifier règles",
+      "data": {
+        "assistantCommercialAction": "edit_rules",
+        "batchId": "${batchId}"
+      }
+    }
+  ]
+}

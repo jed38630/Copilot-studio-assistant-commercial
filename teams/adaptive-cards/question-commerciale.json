@@ -1,0 +1,66 @@
+{
+  "$schema": "https://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "❓ Décision commerciale requise",
+      "weight": "Bolder",
+      "size": "Large",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "${resumeEmail}",
+      "wrap": true
+    },
+    {
+      "type": "FactSet",
+      "facts": [
+        {
+          "title": "Point de blocage",
+          "value": "${pointBlocage}"
+        },
+        {
+          "title": "Options proposées",
+          "value": "${optionsResume}"
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Option A",
+      "data": {
+        "assistantCommercialAction": "question_option_a",
+        "messageId": "${messageId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Option B",
+      "data": {
+        "assistantCommercialAction": "question_option_b",
+        "messageId": "${messageId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Option C",
+      "data": {
+        "assistantCommercialAction": "question_option_c",
+        "messageId": "${messageId}"
+      }
+    },
+    {
+      "type": "Action.Submit",
+      "title": "Me rappeler plus tard",
+      "data": {
+        "assistantCommercialAction": "remind_later",
+        "messageId": "${messageId}"
+      }
+    }
+  ]
+}

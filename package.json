@@ -1,0 +1,20 @@
+{
+  "name": "assistant-commercial-copilot-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Solution Assistant Commercial pour Microsoft Copilot Studio, Power Automate, Outlook, Teams et Microsoft Graph.",
+  "scripts": {
+    "test": "node --experimental-loader ./tests/ts-loader.mjs tests/run-tests.mjs",
+    "validate": "node --experimental-loader ./tests/ts-loader.mjs scripts/validate-config.ts",
+    "simulate": "node --experimental-loader ./tests/ts-loader.mjs scripts/simulate-classification.ts",
+    "historical:sample": "node --experimental-loader ./tests/ts-loader.mjs scripts/test-historical-batch.ts",
+    "report:sample": "node --experimental-loader ./tests/ts-loader.mjs scripts/generate-sample-report.ts",
+    "folders:dry-run": "node --experimental-loader ./tests/ts-loader.mjs scripts/setup-folders.ts --dry-run",
+    "generate:power-platform": "node --experimental-loader ./tests/ts-loader.mjs scripts/generate-power-platform-artifacts.ts"
+  },
+  "engines": {
+    "node": "^20.9.0 || >=22.0.0"
+  },
+  "license": "UNLICENSED"
+}

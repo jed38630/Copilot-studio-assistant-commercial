@@ -1,0 +1,18 @@
+{
+  "id": "msg-litige-001",
+  "conversationId": "conv-litige-001",
+  "receivedDateTime": "2026-05-21T13:15:00Z",
+  "from": {
+    "emailAddress": {
+      "name": "Marc Durand",
+      "address": "marc.durand@client-alpha.fr"
+    }
+  },
+  "subject": "Litige sur contrat et facture impayée",
+  "bodyPreview": "Bonjour Jérémy, nous avons un litige sur le contrat signé et une facture impayée. Merci de me rappeler avant toute action.",
+  "hasAttachments": true,
+  "isKnownClient": true,
+  "requiresResponse": true,
+  "complaint": true,
+  "contractOrQuoteIssue": true
+}
