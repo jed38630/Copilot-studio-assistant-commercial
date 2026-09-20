@@ -58,6 +58,16 @@ Les éléments retirés de ce nœud sont les règles de classement et de scoring
 
 La version simplifiée a été enregistrée et publiée dans Copilot Studio. Le workflow reste publié avec les deux avertissements non bloquants déjà présents. Aucun email n’a été envoyé et aucune source SharePoint n’a été modifiée.
 
+## Diagnostic Support du 20 septembre 2026
+
+L’exécution de 21:26 concernait bien une relance Support critique : ticket `#1260889`, DMS/Athoris, incident non résolu depuis plus de 15 jours, erreur `Taxe code invalide` et plus de 5 000 euros de facturation bloquée. La sortie d’analyse contenait correctement ces éléments et recommandait une validation humaine.
+
+Le domaine `Interne` observé dans `AC - Triage` ne venait pas d’une mauvaise lecture du mail. Le message du nœud `02 - Triage - AC - Triage` ne contenait pas la sortie du nœud précédent ; il indiquait seulement que le contexte était transmis. L’agent a donc reçu un contexte vide et a appliqué son repli prudent `Interne / Triage manuel`.
+
+Correction effectuée dans le tenant : insertion du jeton dynamique `Response` de `01 - Analyser email et conversation` dans le message de `02 - Triage - AC - Triage`. Le workflow a été enregistré et publié. Les deux avertissements de publication restent non bloquants.
+
+Prochain test : envoyer ou rejouer un email Support réel et vérifier que `AC - Triage` retourne `domaine = Support`, que `03 - Routage domaine` prend la branche Support, puis que `03A - AC Support` prépare l’accusé de réception client et la relance interne sans envoi automatique.
+
 ## Prochaine validation ciblée
 
 La correction de détection a été appliquée et publiée dans AC - Produits. L’agent normalise maintenant accents, casse, espaces, tirets, points, abréviations et fautes de frappe ; `CF`, `C.F.N.` et `Business Planner` sont proposés comme `CFN` avec confiance réduite si le contexte est ambigu. Rejouer un email équivalent et vérifier que `05 - Rechercher connaissances produit` puis `06 - Rediger brouillon contextualise` sont pris avant la création du brouillon. Le test devra ensuite couvrir les autres produits : `CRM 360`, `DMS`, `Digital Invoice`, `Digital Purchase`, `Digital Signature`, `MaxSat`, `MaxLead`, `Remarketing`, `Missive`, `LPN`, `After Sales Planner`, `Website`, `BI 360` et `Nextlane Platform`.
