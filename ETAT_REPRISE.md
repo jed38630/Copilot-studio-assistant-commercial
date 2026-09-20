@@ -26,9 +26,19 @@ Le diagnostic est maintenant établi : cette étape utilisait l’action génér
 
 Corrections effectuées dans le tenant : l’ancien nœud générique M365 Copilot a été supprimé et remplacé par un nœud `Assistant`, renommé `06 - Rediger brouillon contextualise`, associé à AC - Rédaction. Le parseur JSON `07 - Parser la decision structuree` pointe maintenant vers la sortie de ce nouveau nœud et conserve le repli vers l’analyse initiale. La condition produit accepte désormais les sorties `adaptiveCardResponse` et `response` de l’agent de préqualification. La correction est enregistrée et publiée.
 
-Le dernier test réel est donc techniquement réussi pour les étapes d’analyse et de préqualification, mais il n’a pas encore validé la chaîne brouillon complète : la recherche produit et la rédaction étaient encore ignorées avant la correction. Aucun envoi n’a été effectué.
+Un run réel ultérieur a confirmé la chaîne brouillon complète : `08 - Journaliser EmailLog2`, `07 - Parser la decision structuree`, `09 - Decider creation brouillon`, `10 - Creer brouillon Graph`, `11 - Finaliser brouillon Outlook` et `12 - Journaliser DraftLog` ont réussi. Le brouillon a donc bien été créé dans le fil Outlook du message reçu et l’utilisateur l’a retrouvé dans Outlook. Aucun email n’a été envoyé automatiquement.
 
-Ne pas considérer le test comme réussi tant que les étapes suivantes n’ont pas abouti :
+Le test réel du 20 septembre 2026 à 21:09 a également terminé avec le statut Réussite. Pour ce message, `03 - Routage domaine` a pris la branche Sinon et `04 - Décider si recherche produit` a pris sa branche Sinon ; les agents Produits et Rédaction contextualisée ont donc été ignorés, ce qui est cohérent si le message ne concernait pas un produit identifié. La décision de création de brouillon a néanmoins été prise. La couverture du chemin produit reste à valider avec un email mentionnant explicitement un produit Nextlane.
+
+Le chemin générique de création de brouillon est validé. Il reste à valider séparément le chemin enrichi par connaissances produit et à contrôler l’idempotence sur un même MessageId.
+
+## Prochaine validation ciblée
+
+Envoyer un email de test mentionnant explicitement un produit, par exemple `CRM 360`, `DMS`, `Digital Invoice`, `Digital Purchase`, `Digital Signature`, `MaxSat`, `MaxLead`, `Remarketing`, `Missive`, `LPN`, `CFN`, `After Sales Planner`, `Website`, `BI 360` ou `Nextlane Platform`. Vérifier que `05 - Rechercher connaissances produit` puis `06 - Rediger brouillon contextualise` sont pris avant la création du brouillon.
+
+Pour le contrôle d’idempotence, ne pas renvoyer ni retraiter le même `MessageId` sans vérifier d’abord le journal et le comportement prévu du flux.
+
+Les contrôles finaux restent :
 
 1. création du brouillon dans le fil Outlook ;
 2. journalisation dans EmailLog2 ;
@@ -38,7 +48,7 @@ Ne pas considérer le test comme réussi tant que les étapes suivantes n’ont 
 
 ## Prochaine action
 
-Envoyer un nouvel email de test contrôlé après publication, puis vérifier l’exécution complète de `05 - Rechercher connaissances produit`, `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, la création du brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Ne jamais cliquer sur un bouton d’envoi automatique.
+Réaliser le test produit ciblé ci-dessus, puis vérifier `05 - Rechercher connaissances produit`, `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, le brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Ne jamais cliquer sur un bouton d’envoi automatique.
 
 Les tests locaux sont actuellement au vert : 15 tests réussis, dont la classification, le nettoyage historique en simulation, l’idempotence, les artefacts Power Platform et les garde-fous de sécurité.
 
