@@ -16,11 +16,13 @@ Le workflow Power Automate principal est publié avec le routage modulaire et le
 - AC - Rédaction
 - Assistant Commercial - Historique
 
-## Dernier blocage connu
+## Dernier diagnostic
 
-Le dernier e-mail de test a réussi l’analyse et le triage, mais l’exécution a échoué à l’étape `06 - Rédiger brouillon contextualisé`.
+Le dernier e-mail de test réussit l’analyse, le triage et le routage, puis échoue à l’étape `06 - Rédiger brouillon contextualisé` avec `NotFound` lors de la récupération de l’état de conversation.
 
-La prochaine action est d’ouvrir la dernière exécution en erreur dans Copilot Studio et de lire le détail exact de cette étape avant toute nouvelle modification.
+Le diagnostic est maintenant établi : cette étape utilisait l’action générique M365 Copilot `Chat` avec l’identifiant de l’agent AC - Rédaction. Les autres agents du workflow sont appelés par des nœuds `Assistant`.
+
+Correction en cours dans le tenant : l’ancien nœud a été remplacé par un nœud `Assistant`, renommé `06 - Rediger brouillon contextualise`, et associé à AC - Rédaction. La référence du parseur JSON en aval doit encore être contrôlée et reliée à la sortie du nouveau nœud. Le workflow n’est pas encore publié après cette modification et aucun nouveau test ne doit être lancé avant validation du parseur.
 
 Ne pas considérer le test comme réussi tant que les étapes suivantes n’ont pas abouti :
 
