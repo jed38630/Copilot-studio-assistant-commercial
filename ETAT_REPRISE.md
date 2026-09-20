@@ -18,11 +18,11 @@ Le workflow Power Automate principal est publié avec le routage modulaire et le
 
 ## Dernier diagnostic
 
-Le dernier e-mail de test réussit l’analyse, le triage et le routage, puis échoue à l’étape `06 - Rédiger brouillon contextualisé` avec `NotFound` lors de la récupération de l’état de conversation.
+Le dernier e-mail de test réussissait l’analyse, le triage et le routage, puis échouait à l’étape `06 - Rédiger brouillon contextualisé` avec `NotFound` lors de la récupération de l’état de conversation.
 
 Le diagnostic est maintenant établi : cette étape utilisait l’action générique M365 Copilot `Chat` avec l’identifiant de l’agent AC - Rédaction. Les autres agents du workflow sont appelés par des nœuds `Assistant`.
 
-Correction en cours dans le tenant : l’ancien nœud a été remplacé par un nœud `Assistant`, renommé `06 - Rediger brouillon contextualise`, et associé à AC - Rédaction. La référence du parseur JSON en aval doit encore être contrôlée et reliée à la sortie du nouveau nœud. Le workflow n’est pas encore publié après cette modification et aucun nouveau test ne doit être lancé avant validation du parseur.
+Correction effectuée dans le tenant : l’ancien nœud générique M365 Copilot a été supprimé et remplacé par un nœud `Assistant`, renommé `06 - Rediger brouillon contextualise`, associé à AC - Rédaction. Le parseur JSON `07 - Parser la decision structuree` pointe maintenant vers la sortie de ce nouveau nœud et conserve le repli vers l’analyse initiale. Le workflow est enregistré sans erreur bloquante et la version publiée est à jour. Aucun nouvel email n’a encore validé la chaîne complète après cette correction.
 
 Ne pas considérer le test comme réussi tant que les étapes suivantes n’ont pas abouti :
 
@@ -31,6 +31,10 @@ Ne pas considérer le test comme réussi tant que les étapes suivantes n’ont 
 3. journalisation dans DraftLog ;
 4. notification Teams éventuelle ;
 5. contrôle de l’idempotence par MessageId.
+
+## Prochaine action
+
+Envoyer un nouvel email de test contrôlé, puis vérifier l’exécution complète de `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, la création du brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Ne jamais cliquer sur un bouton d’envoi automatique.
 
 ## Règles à conserver
 
