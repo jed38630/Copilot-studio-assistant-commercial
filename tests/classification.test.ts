@@ -77,3 +77,26 @@ test('les alias CFN et CF sont reconnus comme le produit CFN', () => {
   assert.equal(cf.product, 'CFN');
   assert.equal(cf.confidence, 75);
 });
+
+test('une demande urgente CFN déclenche le chemin brouillon et Teams', () => {
+  const decision = classifyRealtimeEmail({
+    id: 'msg-cfn-urgent',
+    from: { emailAddress: { name: 'Client Test', address: 'contact@client-alpha.fr' } },
+    subject: 'Devis urgent CFN / Business Planner',
+    bodyPreview: 'Pouvez-vous envoyer avant vendredi un devis pour la mise en place du CF ?',
+    body: 'Le budget est ouvert et nous devons valider rapidement le planning, les prérequis et le cadrage CFN Business Planner.',
+    quoteRequest: true,
+    requiresResponse: true,
+    commercialImpact: true,
+    urgent: true,
+    hasAttachments: true
+  });
+
+  assert.equal(decision.produitIdentifie, 'CFN');
+  assert.ok(decision.aliasDetectes.includes('cf'));
+  assert.ok(decision.aliasDetectes.includes('business planner'));
+  assert.equal(decision.brouillonNecessaire, true);
+  assert.equal(decision.alerteTeamsNecessaire, true);
+  assert.equal(decision.dossierDestination, '01 - À traiter');
+  assert.ok(decision.scorePriorite >= DEFAULT_SETTINGS.SeuilPrioriteAlerteTempsReel);
+});

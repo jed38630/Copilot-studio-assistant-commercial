@@ -48,7 +48,17 @@ Inspection en lecture seule des sources : la bibliothèque `Product` contient no
 
 À la demande de Jérémy, l’anomalie PPTX est mise de côté. Une stratégie d’indexation en lecture seule des bibliothèques a été documentée dans `docs/SHAREPOINT_INDEXATION.md`. Elle prévoit un catalogue des fichiers, métadonnées, liens, ETag, pagination Graph et statut d’indexation, sans recopier ni modifier les sources SharePoint. Le flux d’indexation reste à créer dans le tenant après validation de la liste cible.
 
-Une régression locale a été ajoutée dans `scripts/simulate-classification.ts` et `tests/classification.test.ts` : `CFN`, `C.F.N.`, `Business Planner` et `CF` sont reconnus comme le produit `CFN`, avec une confiance réduite pour l’alias court `CF`. La suite locale compte maintenant 16 tests réussis.
+Une régression locale a été ajoutée dans `scripts/simulate-classification.ts` et `tests/classification.test.ts` : `CFN`, `C.F.N.`, `Business Planner` et `CF` sont reconnus comme le produit `CFN`, avec une confiance réduite pour l’alias court `CF`.
+
+Reprise du 21 septembre 2026 : le dépôt GitHub a été récupéré sur ce poste et la suite locale a été relancée avec le runtime Node Codex, car `npm` n'est pas disponible dans le PATH Windows. Une régression supplémentaire couvre le scénario de test réel recommandé : demande urgente `CFN / Business Planner`, alias `CF`, demande de devis et échéance. Ce scénario doit créer un brouillon, alerter Teams et viser `01 - À traiter`. La suite locale compte maintenant 17 tests réussis.
+
+Correction du 21 septembre 2026 : le bloc `07 - Parser la decision structuree` échouait lorsque la sortie de rédaction contenait un JSON entouré de balises Markdown ```` ```json ````. Le contenu du bloc a été remplacé par une expression `@replace(...)` qui applique `trim()` puis retire les balises avant le parsing. Le workflow a été enregistré et publié ; aucun email n'a été envoyé.
+
+Validation du 22 septembre 2026 : un nouvel email de test a été traité avec succès après la correction du bloc 7. Le workflow a donc été validé à nouveau en conditions réelles ; aucun email n’a été envoyé automatiquement.
+
+Validation Support du 22 septembre 2026 : le run `08584115735259637537162547003CU00` s’est terminé en réussite en 2 min 56 s. Le bloc `07 - Parser la decision structuree` et la journalisation ont réussi ; la branche Support a été prise, tandis que la recherche produit et la rédaction contextualisée ont été correctement ignorées. Aucun envoi automatique n’a été déclenché.
+
+Le parcours Support est désormais validé. Le contrôle restant est l’idempotence en conditions réelles : vérifier dans `EmailLog2` qu’un `MessageId` traité n’a qu’une seule ligne et qu’aucun second brouillon ou déplacement n’est créé. Le test doit être préparé avant toute nouvelle exécution afin d’éviter un retraitement involontaire.
 
 ## Mise à jour du 20 septembre 2026 : bloc d’analyse allégé
 
@@ -84,9 +94,9 @@ Les contrôles finaux restent :
 
 ## Prochaine action
 
-Réaliser le test produit ciblé par un email réel, puis vérifier `05 - Rechercher connaissances produit`, `06 - Rediger brouillon contextualise`, `07 - Parser la decision structuree`, EmailLog2, le brouillon Outlook dans le fil, DraftLog et la notification Teams éventuelle. Surveiller également le temps de réponse de la connaissance PPTX ; si le blocage se reproduit, réduire ou réindexer les sources documentaires avant de relancer la chaîne. Ne jamais cliquer sur un bouton d’envoi automatique. Dernière modification du tenant : correction des alias AC - Produits enregistrée et publiée le 20 septembre 2026.
+Le chemin produit ayant été validé par un nouvel email réel, poursuivre avec un test Support et vérifier que `AC - Triage` retourne `domaine = Support`, que `03 - Routage domaine` prend la branche Support et que `03A - AC Support` prépare les éléments attendus sans envoi automatique. Ensuite, contrôler l’idempotence sur un `MessageId` déjà journalisé, sans retraiter le message avant d’avoir vérifié le journal. Ne jamais cliquer sur un bouton d’envoi automatique. Dernière modification du tenant : correction des alias AC - Produits enregistrée et publiée le 20 septembre 2026.
 
-Les tests locaux sont actuellement au vert : 16 tests réussis, dont la classification, la détection des alias CFN/CF, le nettoyage historique en simulation, l’idempotence, les artefacts Power Platform et les garde-fous de sécurité.
+Les tests locaux sont actuellement au vert : 17 tests réussis, dont la classification, la détection des alias CFN/CF, le scénario urgent `CFN / Business Planner`, le nettoyage historique en simulation, l’idempotence, les artefacts Power Platform et les garde-fous de sécurité.
 
 ## Règles à conserver
 
