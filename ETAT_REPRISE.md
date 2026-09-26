@@ -247,3 +247,22 @@ Un prototype exécutable est disponible dans `dashboard/local` pour un usage sur
 Le test local a été réalisé avec deux messages d’exemple : la page répond en HTTP 200, la lecture JSON fonctionne et une action `regenerate` est bien écrite. La procédure est dans `dashboard/local/README.md`. Cette variante est adaptée à un poste local allumé et synchronisé par OneDrive ; elle ne remplace pas l’authentification nécessaire pour rendre le dashboard Proxmox accessible à plusieurs postes ou 24/7.
 
 Le prototype a ensuite été lancé sur le poste de Jérémy avec le dossier OneDrive `OneDrive - NEXTLANE\Assistant Commercial Dashboard`. Chrome affiche maintenant `Connecté au processus`, les deux messages du JSON sont visibles et un clic réel sur `Re-générer` a créé un fichier d’action `regenerate` dans le dossier `actions`. Le serveur local reste lancé sur `http://localhost:8090/` pour la démonstration.
+
+## Mise à jour périodique du JSON OneDrive préparée
+
+Le dashboard local relit déjà `dashboard-data.json` à chaque rafraîchissement.
+La procédure du flux `AC - Dashboard - Exporter journal JSON OneDrive` a été
+ajoutée dans `power-automate/flows/AC-dashboard-export-json-onedrive.md`.
+
+Le flux recommandé s'exécute toutes les cinq minutes, lit
+`AssistantCommercial_EmailLog2`, projette les champs utiles et met à jour le
+fichier privé `Assistant Commercial Dashboard/dashboard-data.json` dans OneDrive.
+Le contrat JSON est versionné dans
+`power-automate/contracts/dashboard-data.schema.json`. La procédure conserve le
+dernier fichier valide en cas d'erreur et n'ajoute aucune action Outlook,
+d'envoi ou suppression.
+
+Le dépôt contient la conception et les expressions prêtes à reproduire dans
+Power Automate. Il reste à créer ou valider ce flux dans le tenant avec les
+connexions SharePoint et OneDrive de Jérémy, puis à effectuer un test réel de
+rafraîchissement sur le poste où OneDrive est synchronisé.

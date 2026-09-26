@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nextlane.example/schemas/assistant-commercial-dashboard-data.json",
+  "title": "Assistant Commercial dashboard data",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generatedAt", "source", "items"],
+  "properties": {
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "source": { "const": "AssistantCommercial_EmailLog2" },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["MessageId"],
+        "properties": {
+          "MessageId": { "type": "string" },
+          "ConversationId": { "type": ["string", "null"] },
+          "DateReception": { "type": ["string", "null"] },
+          "Expediteur": { "type": ["string", "null"] },
+          "Objet": { "type": ["string", "null"] },
+          "ResumeEmail": { "type": ["string", "null"] },
+          "DomainePrincipal": { "type": ["string", "null"] },
+          "SousType": { "type": ["string", "null"] },
+          "ProduitPrincipal": { "type": ["string", "null"] },
+          "Categorie": { "type": ["string", "null"] },
+          "ScorePriorite": { "type": ["number", "null"] },
+          "NiveauConfiance": { "type": ["number", "null"] },
+          "StatutValidation": { "type": ["string", "null"] },
+          "ActionEffectuee": { "type": ["string", "null"] },
+          "RaisonDecision": { "type": ["string", "null"] },
+          "LienEmail": { "type": ["string", "null"] },
+          "LienBrouillon": { "type": ["string", "null"] },
+          "DateTraitement": { "type": ["string", "null"] },
+          "Erreur": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

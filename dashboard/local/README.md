@@ -23,11 +23,15 @@ $env:AC_ONEDRIVE_SYNC_DIR = $sync
 npm run dashboard:local
 ```
 
-Ouvrir ensuite `http://localhost:8090/`. Le fichier `dashboard-data.json` pourra être remplacé par un flux Power Automate qui exporte les lignes d’`AssistantCommercial_EmailLog2`.
+Ouvrir ensuite `http://localhost:8090/`. Le fichier `dashboard-data.json` peut
+être remplacé automatiquement toutes les cinq minutes par le flux
+`AC - Dashboard - Exporter journal JSON OneDrive`. La procédure complète et le
+contrat sont dans `power-automate/flows/AC-dashboard-export-json-onedrive.md`
+et `power-automate/contracts/dashboard-data.schema.json`.
 
 ## Flux Power Automate à prévoir
 
-1. Déclencheur : planifié toutes les 1 à 5 minutes, ou déclenché par une mise à jour du journal.
+1. Déclencheur : planifié toutes les 5 minutes.
 2. Lire les lignes récentes du journal SharePoint.
 3. Construire un objet JSON avec uniquement les champs nécessaires au dashboard.
 4. Écrire ou remplacer `dashboard-data.json` dans le dossier OneDrive privé.
