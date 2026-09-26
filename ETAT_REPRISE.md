@@ -233,3 +233,15 @@ La session Azure connectée sous `jdruelle@nextlane.com` permet d’ouvrir le po
 5. relance `scripts/deploy-proxmox.ps1` avec le compte SSH `deploy`.
 
 Aucune permission d’envoi d’email n’est requise pour le dashboard et aucun secret n’a été créé ou exposé pendant cette vérification.
+
+## Exemple local sans Entra ID : JSON OneDrive
+
+Un prototype exécutable est disponible dans `dashboard/local` pour un usage sur le PC de Jérémy sans API externe authentifiée :
+
+- `dashboard/local/server.mjs` sert le dashboard sur `http://localhost:8090/` ;
+- `dashboard-data.json` est lu depuis un dossier OneDrive synchronisé ;
+- les demandes `ignore`, `classify` et `regenerate` sont écrites dans `actions/*.json` ;
+- chaque demande porte un `ActionId` et une répétition du même identifiant est reconnue comme doublon ;
+- aucun endpoint d’envoi ou de suppression n’existe.
+
+Le test local a été réalisé avec deux messages d’exemple : la page répond en HTTP 200, la lecture JSON fonctionne et une action `regenerate` est bien écrite. La procédure est dans `dashboard/local/README.md`. Cette variante est adaptée à un poste local allumé et synchronisé par OneDrive ; elle ne remplace pas l’authentification nécessaire pour rendre le dashboard Proxmox accessible à plusieurs postes ou 24/7.

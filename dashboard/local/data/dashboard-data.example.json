@@ -1,0 +1,34 @@
+{
+  "items": [
+    {
+      "MessageId": "local-demo-001",
+      "Expediteur": "Jean Dupont",
+      "Objet": "Migration Cloud",
+      "ResumeEmail": "Demande de devis pour trois concessions",
+      "DateReception": "2026-09-26T09:41:00+02:00",
+      "StatutValidation": "À valider",
+      "DomainePrincipal": "Commercial",
+      "ProduitPrincipal": "Cloud",
+      "NiveauConfiance": 92,
+      "ScorePriorite": 85,
+      "Apercu": "Nous souhaitons étudier une migration Cloud pour trois concessions.",
+      "RaisonDecision": "Réponse commerciale à préparer avec validation humaine.",
+      "LienEmail": "https://outlook.office.com/mail/"
+    },
+    {
+      "MessageId": "local-demo-002",
+      "Expediteur": "Support client",
+      "Objet": "Blocage sur une facture",
+      "ResumeEmail": "Incident de facturation à accuser réception et relancer en interne",
+      "DateReception": "2026-09-26T08:15:00+02:00",
+      "StatutValidation": "Urgent",
+      "DomainePrincipal": "Support / Facturation",
+      "ProduitPrincipal": "Digital Invoice",
+      "NiveauConfiance": 91,
+      "ScorePriorite": 95,
+      "Apercu": "Plusieurs factures ne peuvent pas être générées.",
+      "RaisonDecision": "Préparer un accusé de réception client et une relance interne.",
+      "LienEmail": "https://outlook.office.com/mail/"
+    }
+  ]
+}
