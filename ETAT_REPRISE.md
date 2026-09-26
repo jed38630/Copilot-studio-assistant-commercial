@@ -203,3 +203,21 @@ La configuration front-end détecte maintenant automatiquement une API same-orig
 Un conteneur LXC dédié a été créé dans le nœud Proxmox : CT 113 `assistant-commercial`. Il utilise le template Debian 12, est non privilégié, dispose de `nesting=1`, de 2 vCPU, de 4 Gio de mémoire, de 512 Mio de swap, d’un disque de 32 Gio et d’une adresse IPv4 en DHCP. Le conteneur a été démarré automatiquement et la tâche Proxmox est terminée avec succès.
 
 Proxmox a affiché un avertissement de capacité du thin pool : environ 16 Gio libres au moment de la création. Aucun autre disque ou conteneur n’a été ajouté. Prochaine étape : relever l’adresse IP du CT 113, vérifier l’accès SSH, installer Docker et lancer `scripts/deploy-proxmox.ps1` depuis le PC de développement. Le mot de passe administrateur reste uniquement dans Proxmox et n’est pas enregistré dans le dépôt.
+
+## Mise à jour du 26 septembre 2026 : dashboard Docker déployé sur le CT 113
+
+Le CT 113 répond sur `192.168.0.87`. Docker 29.8.1 et Docker Compose v5.5.1 sont installés et actifs. La stack a été déployée avec `scripts/deploy-proxmox.ps1` dans `/home/deploy/assistant-commercial` :
+
+- `dashboard-web` est actif et publié sur le port 8080 ;
+- `dashboard-api` est actif derrière Nginx ;
+- `GET /` répond en HTTP 200 et sert le dashboard ;
+- le test `GET /api/dashboard/emails` retourne encore une erreur de configuration attendue, car les paramètres Entra ID ne sont pas renseignés.
+
+Accès de déploiement :
+
+- login Linux : `deploy` ;
+- authentification : clé RSA locale dédiée, jamais copiée dans GitHub ;
+- aucun mot de passe connu ou communiqué n’a été créé pour `deploy` ;
+- le mot de passe `root` a été saisi uniquement par Jérémy dans Proxmox et n’est pas connu ni stocké par le projet.
+
+Le fichier local `deployment/proxmox/.env` contient seulement les paramètres SharePoint non secrets connus et des valeurs Entra vides ; il est ignoré par Git. Pour activer la lecture réelle, un administrateur doit fournir `TENANT_ID`, `CLIENT_ID` et `CLIENT_SECRET` via un mécanisme sécurisé, puis redéployer la stack. Les URLs des flows d’action restent également vides. Le dashboard n’envoie ni ne supprime aucun email.
