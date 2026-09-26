@@ -179,3 +179,11 @@ Lorsque `dashboard/index.html` est hébergé dans le site `EquipeCommercialeZone
 Les actions `ignore`, `classify` et `regenerate` ne sont pas exécutées directement par le navigateur. Elles sont écrites dans la nouvelle liste cible `AssistantCommercial_DashboardActions`, puis traitées par un flux SharePoint standard décrit dans `power-automate/flows/AC-dashboard-actions-queue.md`. Ce flux doit conserver les garde-fous : aucun envoi, aucune suppression directe, création de brouillon uniquement pour `regenerate`, et journalisation de chaque demande.
 
 Le schéma de la liste est dans `sharepoint/schema/AssistantCommercial_DashboardActions.md`. Le code et la documentation sont prêts dans le dépôt ; il reste à créer la liste et le flux dans le site d’équipe, déposer les fichiers du dashboard dans `Site Assets`, puis effectuer un test réel de lecture et de demande de brouillon. Si le tenant bloque les scripts HTML dans SharePoint, la solution de repli est une API Azure protégée par Entra ID.
+
+## Mise à jour du 26 septembre 2026 : tenant préparé
+
+La liste SharePoint `AssistantCommercial_DashboardActions` a été créée dans `Equipe Commerciale Zone A` avec les colonnes `MessageId`, `Action`, `Category`, `Instruction`, `Status`, `RequestedAt`, `ProcessedAt`, `RequestedBy`, `Result` et `Error`. Les statuts disponibles sont `Requested`, `Processing`, `Completed`, `Rejected` et `Error`.
+
+Le flux Power Automate standard `AC - Dashboard - Traiter demandes d’action` a été créé et vérifié comme activé. Il utilise le déclencheur SharePoint « Lorsqu’un élément est créé », sur cette liste, puis met la demande à `Processing`. La suite du routage métier `ignore`, `classify` et `regenerate` doit encore être complétée avant de considérer les boutons comme opérationnels de bout en bout ; aucun envoi ni suppression n’a été ajouté.
+
+Le dossier `assistant-commercial-dashboard` a été créé dans `Site Assets` pour héberger les fichiers HTML. Le chargement automatique des fichiers locaux a été bloqué par la sécurité de la session navigateur et n’a pas été contourné. Il reste donc à y déposer manuellement `index.html`, `styles.css`, `app.js`, `api.js` et `config.js`, puis ouvrir `SiteAssets/assistant-commercial-dashboard/index.html` pour vérifier le mode SharePoint réel.
