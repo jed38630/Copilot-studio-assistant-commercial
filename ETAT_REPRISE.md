@@ -221,3 +221,15 @@ Accès de déploiement :
 - le mot de passe `root` a été saisi uniquement par Jérémy dans Proxmox et n’est pas connu ni stocké par le projet.
 
 Le fichier local `deployment/proxmox/.env` contient seulement les paramètres SharePoint non secrets connus et des valeurs Entra vides ; il est ignoré par Git. Pour activer la lecture réelle, un administrateur doit fournir `TENANT_ID`, `CLIENT_ID` et `CLIENT_SECRET` via un mécanisme sécurisé, puis redéployer la stack. Les URLs des flows d’action restent également vides. Le dashboard n’envoie ni ne supprime aucun email.
+
+## Contrôle Entra ID du 26 septembre 2026
+
+La session Azure connectée sous `jdruelle@nextlane.com` permet d’ouvrir le portail, mais l’accès à **Inscriptions d’applications** retourne HTTP 401 « Vous n’avez pas accès ». La création de l’application Entra et le consentement administrateur ne peuvent donc pas être réalisés avec cette session. Le dashboard reste en mode démonstration jusqu’à ce qu’un administrateur :
+
+1. crée ou fournisse une application Entra dédiée au dashboard ;
+2. accorde uniquement les permissions SharePoint nécessaires à la lecture des journaux ;
+3. transmette `TENANT_ID`, `CLIENT_ID` et le secret par un canal sécurisé, jamais dans GitHub ;
+4. renseigne les trois valeurs dans `deployment/proxmox/.env` sur le poste de déploiement ;
+5. relance `scripts/deploy-proxmox.ps1` avec le compte SSH `deploy`.
+
+Aucune permission d’envoi d’email n’est requise pour le dashboard et aucun secret n’a été créé ou exposé pendant cette vérification.
