@@ -107,9 +107,11 @@ En simulation, aucun déplacement et aucun brouillon ne sont créés. Le workflo
 - Résumé commercial hebdomadaire le lundi à 08:00, Europe/Paris.
 - Rapport quotidien des éléments en quarantaine depuis plus de 30 jours.
 
-### 5.5 Dashboard Power Apps
+### 5.5 Dashboard HTML
 
-Le dashboard publié `Assistant Commercial - Dashboard` est une couche d'interface connectée aux journaux SharePoint. Il affiche les résultats des traitements et ne duplique ni le triage, ni la rédaction, ni les garde-fous. Ses commandes doivent appeler des flows Power Automate existants et rester journalisées.
+Le dashboard HTML est l’interface principale de consultation et de pilotage. Il lit les journaux via une API protégée et ne duplique ni le triage, ni la rédaction, ni les garde-fous. Ses commandes appellent les flows Power Automate existants et restent journalisées. Power Apps n’est pas requis pour l’interface utilisateur.
+
+Le navigateur ne reçoit aucun secret Microsoft 365. Une API TypeScript hébergée derrière Microsoft Entra ID sert de façade contrôlée vers SharePoint, Dataverse et les flows. L’ouverture d’un brouillon se limite à une navigation Outlook ; le dashboard ne possède aucune capacité d’envoi ou de suppression.
 
 ## 6. Contrat de sortie du triage
 

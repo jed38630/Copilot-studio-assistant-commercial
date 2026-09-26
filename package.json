@@ -11,7 +11,8 @@
     "historical:sample": "node --experimental-loader ./tests/ts-loader.mjs scripts/test-historical-batch.ts",
     "report:sample": "node --experimental-loader ./tests/ts-loader.mjs scripts/generate-sample-report.ts",
     "folders:dry-run": "node --experimental-loader ./tests/ts-loader.mjs scripts/setup-folders.ts --dry-run",
-    "generate:power-platform": "node --experimental-loader ./tests/ts-loader.mjs scripts/generate-power-platform-artifacts.ts"
+    "generate:power-platform": "node --experimental-loader ./tests/ts-loader.mjs scripts/generate-power-platform-artifacts.ts",
+    "dashboard:api": "node dashboard/api/server.mjs"
   },
   "engines": {
     "node": "^20.9.0 || >=22.0.0"

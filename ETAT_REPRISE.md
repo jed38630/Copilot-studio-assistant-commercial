@@ -138,12 +138,18 @@ npm test
 
 Puis ouvrir `REPRISE_PROJET.md` pour le contexte complet et reprendre dans Copilot Studio avec le même environnement Microsoft 365.
 
-## Mise à jour du 26 septembre 2026 : dashboard Power Apps et architecture
+## Mise à jour du 26 septembre 2026 : dashboard HTML et architecture
 
-Le dashboard `Assistant Commercial - Dashboard` a été créé dans l’environnement `I'CAR SYSTEMS (default)` et publié. Il utilise en lecture les listes SharePoint suivantes du site `Equipe Commerciale Zone A` : `AssistantCommercial_EmailLog2`, `AssistantCommercial_DraftLog` et `AssistantCommercial_Settings`. Le lecteur publié affiche bien les données réelles de `AssistantCommercial_EmailLog2`.
+Le dashboard HTML est désormais l’interface cible. La version Power Apps créée précédemment a uniquement servi à valider que les listes SharePoint sont accessibles et n’est pas retenue comme interface utilisateur principale. Le front-end HTML conserve une démo locale et dispose maintenant d’un adaptateur API configurable pour lire `AssistantCommercial_EmailLog2`, `AssistantCommercial_DraftLog` et `AssistantCommercial_Settings` via une API protégée.
 
-Le schéma d’architecture est disponible dans `docs/assistant-commercial-architecture.svg`. Il formalise la séparation suivante : Outlook déclenche, Copilot Studio comprend et prépare, Power Automate orchestre et journalise, SharePoint ou Dataverse stocke, Teams alerte et Power Apps affiche.
+Le schéma d’architecture est disponible dans `docs/assistant-commercial-architecture.svg`. Il formalise la séparation suivante : Outlook déclenche, Copilot Studio comprend et prépare, Power Automate orchestre et journalise, SharePoint ou Dataverse stocke, Teams alerte et le dashboard HTML affiche.
 
-Contrôle effectué dans Power Apps Studio : le canevas généré expose les sources SharePoint mais ne propose pas directement les flux métier existants dans le menu d’insertion ou le panneau Données. Aucun nouveau triage, appel d’agent ou envoi n’a donc été ajouté dans Power Apps. Le branchement restant consiste à créer les commandes d’interface et à les relier aux flux d’action existants depuis un écran contrôlé, sans dupliquer les règles métier.
+Le front-end HTML expose maintenant un mode live configurable et les contrats `GET /api/dashboard/emails` et `POST /api/dashboard/actions`. Le branchement restant consiste à héberger l’API TypeScript derrière Entra ID et à la relier aux flux d’action existants, sans dupliquer les règles métier.
 
-État fonctionnel : le dashboard est publié comme vue live des journaux ; les compteurs, filtres, détail enrichi et actions finales restent à personnaliser dans la version Power Apps. Les actions sensibles doivent rester des commandes de validation, d’ouverture du brouillon ou de journalisation ; aucun bouton ne doit envoyer un email.
+État fonctionnel : le dashboard HTML fournit les compteurs, filtres, détail enrichi et adaptateur de rafraîchissement. Les actions sensibles doivent rester des commandes de validation, d’ouverture du brouillon ou de journalisation ; aucun bouton ne doit envoyer un email. La procédure de déploiement est dans `docs/DASHBOARD_HTML_DEPLOYMENT.md`.
+
+## Architecture HTML live confirmée
+
+Le dashboard HTML est confirmé comme interface principale ; Power Apps n’est pas retenu pour l’usage quotidien. `dashboard/api.js` permet le mode live avec `GET /api/dashboard/emails` et `POST /api/dashboard/actions`. `dashboard/api/server.mjs` fournit un squelette Node sans dépendance pour lire les lignes SharePoint via Graph et relayer uniquement les actions `ignore`, `classify` et `regenerate` vers des flows configurés par variables d’environnement.
+
+Le navigateur ne porte aucun secret. Avant utilisation réelle, l’API doit être hébergée derrière Microsoft Entra ID ou une passerelle équivalente, puis les URLs des flows d’action doivent être renseignées dans l’environnement du serveur. Aucun endpoint d’envoi ou de suppression n’est prévu. La configuration de déploiement est dans `docs/DASHBOARD_HTML_DEPLOYMENT.md`.

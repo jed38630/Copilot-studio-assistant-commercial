@@ -1,4 +1,4 @@
-const messages = [
+const mockMessages = [
   {
     id: "ac-001",
     initials: "JD",
@@ -121,6 +121,7 @@ const messages = [
   }
 ];
 
+let messages = [...mockMessages];
 const state = { selectedId: messages[0].id, filter: "all", query: "" };
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
@@ -131,6 +132,74 @@ function escapeHtml(value) {
 
 function statusClass(statusKey) {
   return statusKey === "done" ? "status-done" : statusKey === "urgent" ? "status-urgent" : statusKey === "ignored" ? "status-ignored" : "status-validation";
+}
+
+function statusKeyFor(item) {
+  const value = String(item.status ?? item.StatutTraitement ?? item.StatutValidation ?? item.Categorie ?? "").toLowerCase();
+  if (value.includes("ignor") || value.includes("classé")) return "ignored";
+  if (value.includes("urgent") || value.includes("critique")) return "urgent";
+  if (value.includes("traité") || value.includes("traite") || value.includes("automatique")) return "done";
+  return "validation";
+}
+
+function formatTime(value) {
+  if (!value) return "--:--";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+}
+
+function normalizeMessage(item, index) {
+  const sender = item.sender ?? item.Expediteur ?? item.from ?? "Expéditeur inconnu";
+  const subject = item.subject ?? item.Objet ?? item.Titre ?? "Sans objet";
+  const status = item.status ?? item.StatutTraitement ?? item.StatutValidation ?? item.Categorie ?? "À valider";
+  return {
+    id: item.id ?? item.MessageId ?? `remote-${index}`,
+    initials: item.initials ?? (String(sender).split(/\s+/).slice(0, 2).map((part) => part[0] ?? "").join("").toUpperCase() || "??"),
+    avatar: item.avatar ?? "avatar-purple",
+    sender,
+    address: item.address ?? item.AdresseExpediteur ?? "",
+    subject,
+    summary: item.summary ?? item.ResumeEmail ?? item.RaisonDecision ?? "Décision journalisée par l’Assistant Commercial.",
+    time: item.time ?? formatTime(item.DateReception ?? item.dateReception),
+    status,
+    statusKey: statusKeyFor({ ...item, status }),
+    domain: item.domain ?? item.DomainePrincipal ?? item.Categorie ?? "À surveiller",
+    product: item.product ?? item.ProduitPrincipal ?? "Non identifié",
+    priority: item.priority ?? `Score ${item.ScorePriorite ?? 0}`,
+    confidence: Number(item.confidence ?? item.NiveauConfiance ?? 0),
+    recipients: item.recipients ?? item.Destinataires ?? "Jérémy Druelle",
+    original: item.original ?? item.ContenuOriginal ?? item.Apercu ?? "Contenu non fourni par le journal.",
+    aiSummary: item.aiSummary ?? item.ResumeIA ?? item.RaisonDecision ?? "Aucun résumé IA disponible.",
+    draft: item.draft ?? item.TexteBrouillon ?? "Aucun brouillon créé.",
+    emailLink: item.emailLink ?? item.LienEmail ?? "",
+    draftLink: item.draftLink ?? item.LienBrouillon ?? ""
+  };
+}
+
+function setConnectionState(isLive, detail) {
+  $("#connection-label").textContent = isLive ? "Connecté au processus" : "Mode démonstration";
+  $("#connection-detail").textContent = detail;
+}
+
+async function refreshLive() {
+  if (!window.ACApi?.isLive()) {
+    setConnectionState(false, "Données locales");
+    return;
+  }
+  try {
+    const result = await window.ACApi.listEmails();
+    const items = Array.isArray(result) ? result : result?.items;
+    if (!Array.isArray(items)) throw new Error("Réponse API invalide");
+    messages = items.map(normalizeMessage);
+    if (!messages.some((item) => item.id === state.selectedId)) state.selectedId = messages[0]?.id;
+    renderList();
+    renderDetail();
+    updateMetricLabels();
+    setConnectionState(true, `Dernière synchro · ${new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`);
+  } catch (error) {
+    setConnectionState(false, "API indisponible · données locales");
+    showToast("La source live est indisponible ; les données locales restent affichées.");
+  }
 }
 
 function visibleMessages() {
@@ -195,17 +264,33 @@ function updateMetricLabels() {
   $("[data-metric=validation]").textContent = messages.filter((item) => ["validation", "urgent"].includes(item.statusKey)).length;
 }
 
-function runAction(action) {
+async function runAction(action) {
   const message = messages.find((item) => item.id === state.selectedId);
-  if (["profile", "help", "notifications", "date-filter", "load-more"].includes(action)) {
+  if (["profile", "help", "notifications", "date-filter", "load-more", "refresh"].includes(action)) {
+    if (action === "refresh") return refreshLive();
     const notices = { profile: "Le profil et les paramètres seront connectés à Microsoft 365.", help: "Le tableau de bord respecte la validation humaine et la quarantaine.", notifications: "Aucune nouvelle alerte critique.", "date-filter": "Le filtre de date sera relié aux journaux de traitement.", "load-more": "Le chargement de l’historique sera relié à EmailLog2." };
     showToast(notices[action]);
     return;
   }
   if (!message) return;
   if (action === "close-detail") { $("#detail-empty").hidden = false; $("#detail-content").hidden = true; return; }
-  if (action === "open-outlook") { showToast("Ouverture du brouillon Outlook demandée. L’envoi reste manuel dans Outlook."); return; }
+  if (action === "open-outlook") {
+    const target = message.draftLink || message.emailLink;
+    if (target) window.open(target, "_blank", "noopener,noreferrer");
+    showToast("Ouverture Outlook demandée. L’envoi reste manuel dans Outlook.");
+    return;
+  }
   if (action === "edit") { showToast("Le brouillon est prêt à être modifié dans Outlook."); return; }
+  if (["regenerate", "ignore", "classify"].includes(action) && window.ACApi?.isLive()) {
+    try {
+      await window.ACApi.runAction(action, message.id);
+      showToast(action === "regenerate" ? "Une nouvelle proposition a été préparée, sans envoi." : "Action envoyée au workflow et journalisée.");
+      await refreshLive();
+    } catch (error) {
+      showToast("L’action n’a pas pu être transmise au workflow.");
+    }
+    return;
+  }
   if (action === "regenerate") { message.draft = `${message.draft}\n\n[Version régénérée avec le contexte de la conversation]`; renderDetail(); showToast("Une nouvelle proposition a été préparée, sans envoi."); return; }
   if (action === "ignore") { message.status = "Ignoré"; message.statusKey = "ignored"; renderList(); renderDetail(); updateMetricLabels(); showToast("Email marqué comme ignoré et journalisé."); return; }
   if (action === "classify") { showToast("Le classement sera appliqué par le workflow et journalisé."); return; }
@@ -219,6 +304,12 @@ $$('[data-filter]').forEach((button) => button.addEventListener("click", () => {
 }));
 $("#mail-search").addEventListener("input", (event) => { state.query = event.target.value; renderList(); });
 
-renderList();
-renderDetail();
-updateMetricLabels();
+async function bootstrap() {
+  renderList();
+  renderDetail();
+  updateMetricLabels();
+  await refreshLive();
+  if (window.ACApi?.isLive()) window.setInterval(refreshLive, window.ACApi.refreshIntervalMs);
+}
+
+bootstrap();

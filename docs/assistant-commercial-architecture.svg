@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
   <title id="title">Architecture Assistant Commercial</title>
-  <desc id="desc">Schéma du flux entre Outlook, Copilot Studio, Power Automate, les agents spécialisés, SharePoint ou Dataverse, Teams et Power Apps.</desc>
+  <desc id="desc">Schéma du flux entre Outlook, Copilot Studio, Power Automate, les agents spécialisés, SharePoint ou Dataverse, Teams et le dashboard HTML.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d1421"/><stop offset="1" stop-color="#162338"/></linearGradient>
     <linearGradient id="engine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b4850"/><stop offset="1" stop-color="#16313e"/></linearGradient>
@@ -40,7 +40,7 @@
   <path d="M780 370 V460 H970 V520" class="line"/><text x="870" y="452" class="small">alerte nécessaire</text>
 
   <rect x="1205" y="520" width="315" height="160" rx="16" fill="#224b55" class="box" filter="url(#shadow)"/>
-  <text x="1240" y="558" class="tiny">INTERFACE</text><text x="1240" y="594" class="label">Power Apps</text><text x="1240" y="622" class="small">Compteurs · liste · détail IA</text><text x="1240" y="644" class="small">Commandes vers les flows existants</text>
+  <text x="1240" y="558" class="tiny">INTERFACE</text><text x="1240" y="594" class="label">Dashboard HTML</text><text x="1240" y="622" class="small">Compteurs · liste · détail IA</text><text x="1240" y="644" class="small">API protégée vers les flows existants</text>
   <path d="M905 370 V460 H1360 V520" class="line"/><text x="1110" y="452" class="small">lecture des journaux</text>
 
   <rect x="80" y="754" width="1440" height="76" rx="12" fill="#111b2a" stroke="#26364b"/>

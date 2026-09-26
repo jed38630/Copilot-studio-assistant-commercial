@@ -54,6 +54,7 @@ Documentation détaillée :
 - [Cahier des charges](docs/CAHIER_DES_CHARGES.md)
 - [Tableau de bord](dashboard/README.md)
 - [Schéma d'architecture du dashboard](docs/assistant-commercial-architecture.svg)
+- [Déploiement du dashboard HTML live](docs/DASHBOARD_HTML_DEPLOYMENT.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Déploiement Copilot Studio](docs/DEPLOYMENT_COPILOT_STUDIO.md)
 - [Déploiement Power Automate](docs/DEPLOYMENT_POWER_AUTOMATE.md)
