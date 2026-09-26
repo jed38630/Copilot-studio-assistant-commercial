@@ -15,7 +15,7 @@ Une API TypeScript est préférée à PHP pour rester dans le même langage que 
 
 ## Contrat API du dashboard
 
-Configurer `dashboard/config.js` à partir de `dashboard/config.example.js` uniquement avec l’URL publique de l’API :
+Configurer `dashboard/config.js` à partir de `dashboard/config.example.js` uniquement avec l’URL publique de l’API. Les paramètres SharePoint récupérés sont documentés dans [`RUNTIME_PARAMETERS.md`](RUNTIME_PARAMETERS.md) :
 
 ```js
 window.AC_CONFIG = {
