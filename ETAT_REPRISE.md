@@ -2,6 +2,14 @@
 
 Dernière sauvegarde : 26 septembre 2026
 
+## Mise à jour du 26 septembre 2026 : dashboard Power Apps publié
+
+Le dashboard `Assistant Commercial - Dashboard` a été créé et publié dans l'environnement Power Apps `I'CAR SYSTEMS` à partir du site SharePoint `Equipe Commerciale Zone A`. La connexion principale est `AssistantCommercial_EmailLog2` ; les sources `AssistantCommercial_DraftLog` et `AssistantCommercial_Settings` ont également été ajoutées.
+
+Le lien utilisateur publié est : `https://apps.powerapps.com/play/e/Default-5bc7adc6-fdce-46af-ab42-b2f503dc84c4/a/5506743f-784c-4292-b924-eeadfb7cbabf`.
+
+La version actuelle affiche les données réelles du journal et les champs détaillés. Elle ne recrée pas la logique Copilot Studio/Power Automate. Prochaine évolution : ajouter les commandes du dashboard qui appellent les flows existants pour ouvrir un brouillon Outlook, classer, ignorer ou régénérer, puis tester chaque commande et sa journalisation. Aucun envoi automatique ne doit être ajouté.
+
 ## Mise à jour du 26 septembre 2026 : tableau de bord
 
 Une première interface statique du tableau de bord Assistant Commercial a été ajoutée dans `dashboard/`. Elle reprend le principe observé dans la vidéo de référence : indicateurs du jour en haut, liste des emails traités, filtres et recherche, puis détail de l'email sélectionné avec contenu original, résumé IA, classification, niveau de confiance et brouillon proposé.

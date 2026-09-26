@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture Assistant Commercial</title>
+  <desc id="desc">Schéma du flux entre Outlook, Copilot Studio, Power Automate, les agents spécialisés, SharePoint ou Dataverse, Teams et Power Apps.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d1421"/><stop offset="1" stop-color="#162338"/></linearGradient>
+    <linearGradient id="engine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b4850"/><stop offset="1" stop-color="#16313e"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity=".28"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#63d9c4"/></marker>
+    <marker id="arrow-muted" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10Z" fill="#77899d"/></marker>
+    <style>
+      .title{font:700 30px Inter,Segoe UI,sans-serif;fill:#f5f8fc;letter-spacing:-.04em}.subtitle{font:400 14px Inter,Segoe UI,sans-serif;fill:#98a8ba}.label{font:700 16px Inter,Segoe UI,sans-serif;fill:#f5f8fc}.small{font:400 12px Inter,Segoe UI,sans-serif;fill:#a8b5c4}.tiny{font:700 11px Inter,Segoe UI,sans-serif;fill:#63d9c4;letter-spacing:.11em;text-transform:uppercase}.box{stroke:#34465c;stroke-width:1.5}.line{fill:none;stroke:#63d9c4;stroke-width:3;marker-end:url(#arrow)}.mutedline{fill:none;stroke:#77899d;stroke-width:2;stroke-dasharray:8 8;marker-end:url(#arrow-muted)}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <text x="80" y="70" class="title">Assistant Commercial · architecture cible</text>
+  <text x="80" y="100" class="subtitle">Le dashboard observe et pilote les résultats ; les agents et les workflows restent le moteur métier.</text>
+
+  <rect x="80" y="168" width="250" height="168" rx="16" fill="#1e2c40" class="box" filter="url(#shadow)"/>
+  <text x="112" y="205" class="tiny">SOURCE</text><text x="112" y="240" class="label">Outlook</text><text x="112" y="268" class="small">Nouveaux emails</text><text x="112" y="290" class="small">Conversations et pièces utiles</text><text x="112" y="312" class="small">Brouillons dans le fil d’origine</text>
+
+  <rect x="405" y="138" width="500" height="232" rx="18" fill="url(#engine)" class="box" filter="url(#shadow)"/>
+  <text x="440" y="178" class="tiny">MOTEUR MÉTIER</text><text x="440" y="214" class="label">Copilot Studio + Power Automate</text><text x="440" y="248" class="small">Déclenchement · garde-fous · orchestration</text>
+  <rect x="440" y="274" width="130" height="58" rx="9" fill="#224b55" stroke="#3f7e82"/><text x="455" y="299" class="small">01 · Analyser</text><text x="455" y="318" class="small">le fil</text>
+  <rect x="588" y="274" width="130" height="58" rx="9" fill="#224b55" stroke="#3f7e82"/><text x="605" y="299" class="small">02 · Triage</text><text x="605" y="318" class="small">et routage</text>
+  <rect x="736" y="274" width="130" height="58" rx="9" fill="#224b55" stroke="#3f7e82"/><text x="748" y="299" class="small">03 · Actions</text><text x="748" y="318" class="small">et journal</text>
+
+  <path d="M330 252 H405" class="line"/><text x="342" y="238" class="small">nouveau message</text>
+
+  <rect x="980" y="138" width="540" height="232" rx="18" fill="#171f31" class="box" filter="url(#shadow)"/>
+  <text x="1015" y="178" class="tiny">AGENTS SPÉCIALISÉS</text><text x="1015" y="214" class="label">Compétences indépendantes</text>
+  <text x="1015" y="250" class="small">AC - Triage · AC - Produits · AC - Support</text><text x="1015" y="274" class="small">AC - Facturation · AC - Interne · AC - Rédaction</text><text x="1015" y="298" class="small">Assistant Commercial - Historique</text><text x="1015" y="334" class="small">Chaque agent évolue sans refaire le workflow.</text>
+  <path d="M905 252 H980" class="line"/><text x="912" y="238" class="small">appels ciblés</text>
+
+  <rect x="405" y="520" width="330" height="160" rx="16" fill="#1e2c40" class="box" filter="url(#shadow)"/>
+  <text x="440" y="558" class="tiny">MÉMOIRE & AUDIT</text><text x="440" y="594" class="label">SharePoint / Dataverse</text><text x="440" y="622" class="small">EmailLog2 · DraftLog · Settings</text><text x="440" y="644" class="small">Décisions, statuts, liens et erreurs</text>
+  <path d="M650 370 V520" class="line"/><text x="672" y="452" class="small">journalisation</text>
+
+  <rect x="805" y="520" width="330" height="160" rx="16" fill="#1e2c40" class="box" filter="url(#shadow)"/>
+  <text x="840" y="558" class="tiny">VALIDATION</text><text x="840" y="594" class="label">Microsoft Teams</text><text x="840" y="622" class="small">Alertes et rapports groupés</text><text x="840" y="644" class="small">Validation · question · lien brouillon</text>
+  <path d="M780 370 V460 H970 V520" class="line"/><text x="870" y="452" class="small">alerte nécessaire</text>
+
+  <rect x="1205" y="520" width="315" height="160" rx="16" fill="#224b55" class="box" filter="url(#shadow)"/>
+  <text x="1240" y="558" class="tiny">INTERFACE</text><text x="1240" y="594" class="label">Power Apps</text><text x="1240" y="622" class="small">Compteurs · liste · détail IA</text><text x="1240" y="644" class="small">Commandes vers les flows existants</text>
+  <path d="M905 370 V460 H1360 V520" class="line"/><text x="1110" y="452" class="small">lecture des journaux</text>
+
+  <rect x="80" y="754" width="1440" height="76" rx="12" fill="#111b2a" stroke="#26364b"/>
+  <text x="112" y="785" class="tiny">GARDE-FOUS</text><text x="112" y="810" class="small">Aucun envoi automatique · aucune suppression directe · brouillon validé manuellement dans Outlook · actions journalisées</text>
+  <path d="M570 680 V716 H205 V754" class="mutedline"/><path d="M970 680 V716 H1350 V754" class="mutedline"/>
+</svg>

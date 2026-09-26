@@ -107,6 +107,10 @@ En simulation, aucun déplacement et aucun brouillon ne sont créés. Le workflo
 - Résumé commercial hebdomadaire le lundi à 08:00, Europe/Paris.
 - Rapport quotidien des éléments en quarantaine depuis plus de 30 jours.
 
+### 5.5 Dashboard Power Apps
+
+Le dashboard publié `Assistant Commercial - Dashboard` est une couche d'interface connectée aux journaux SharePoint. Il affiche les résultats des traitements et ne duplique ni le triage, ni la rédaction, ni les garde-fous. Ses commandes doivent appeler des flows Power Automate existants et rester journalisées.
+
 ## 6. Contrat de sortie du triage
 
 Le triage retourne au minimum :
@@ -222,6 +226,7 @@ Le projet est conforme lorsque :
 ## 13. Références du dépôt
 
 - Tableau de bord : `dashboard/index.html`, `dashboard/styles.css` et `dashboard/app.js`
+- Schéma d'architecture : `docs/assistant-commercial-architecture.svg`
 - Architecture : `docs/ARCHITECTURE.md`
 - Déploiement Copilot Studio : `docs/DEPLOYMENT_COPILOT_STUDIO.md`
 - Déploiement Power Automate : `docs/DEPLOYMENT_POWER_AUTOMATE.md`

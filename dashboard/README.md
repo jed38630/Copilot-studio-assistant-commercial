@@ -2,6 +2,8 @@
 
 Ce dossier contient une première interface web statique pour piloter les emails traités par l'Assistant Commercial.
 
+Le schéma d'architecture est disponible dans [`docs/assistant-commercial-architecture.svg`](../docs/assistant-commercial-architecture.svg). Il rappelle que Power Apps est une interface au-dessus des agents, des workflows et des journaux ; il ne recrée pas la logique métier.
+
 ## Ouvrir
 
 Ouvrir `index.html` dans un navigateur. Aucun serveur ni dépendance supplémentaire n'est nécessaire pour la maquette.
@@ -14,6 +16,16 @@ Ouvrir `index.html` dans un navigateur. Aucun serveur ni dépendance supplément
 - Actions de démonstration : sélection, recherche, filtres, ignorer, classer, re-générer et ouverture du brouillon dans Outlook.
 - Responsive desktop, tablette et mobile.
 - Garde-fou visible : l'ouverture Outlook est proposée, mais l'envoi reste manuel.
+
+## Instance Power Apps publiée
+
+- Nom : `Assistant Commercial - Dashboard`
+- Environnement : `I'CAR SYSTEMS` (`Default-5bc7adc6-fdce-46af-ab42-b2f503dc84c4`)
+- Site SharePoint : `https://onenextlane.sharepoint.com/sites/EquipeCommercialeZoneA`
+- Sources connectées : `AssistantCommercial_EmailLog2`, `AssistantCommercial_DraftLog` et `AssistantCommercial_Settings`
+- Lien utilisateur : [ouvrir le dashboard publié](https://apps.powerapps.com/play/e/Default-5bc7adc6-fdce-46af-ab42-b2f503dc84c4/a/5506743f-784c-4292-b924-eeadfb7cbabf)
+
+La première version publiée est générée depuis `AssistantCommercial_EmailLog2`. Elle fournit la lecture réelle du journal et les détails de ses colonnes. Les commandes métier avancées doivent appeler les flows Power Automate existants ; elles ne doivent pas être réimplémentées dans Power Apps.
 
 ## Branchement Microsoft 365 à réaliser
 
