@@ -221,6 +221,7 @@ Le projet est conforme lorsque :
 
 ## 13. Références du dépôt
 
+- Tableau de bord : `dashboard/index.html`, `dashboard/styles.css` et `dashboard/app.js`
 - Architecture : `docs/ARCHITECTURE.md`
 - Déploiement Copilot Studio : `docs/DEPLOYMENT_COPILOT_STUDIO.md`
 - Déploiement Power Automate : `docs/DEPLOYMENT_POWER_AUTOMATE.md`

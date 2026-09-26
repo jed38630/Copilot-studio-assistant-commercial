@@ -2,6 +2,12 @@
 
 Dernière sauvegarde : 26 septembre 2026
 
+## Mise à jour du 26 septembre 2026 : tableau de bord
+
+Une première interface statique du tableau de bord Assistant Commercial a été ajoutée dans `dashboard/`. Elle reprend le principe observé dans la vidéo de référence : indicateurs du jour en haut, liste des emails traités, filtres et recherche, puis détail de l'email sélectionné avec contenu original, résumé IA, classification, niveau de confiance et brouillon proposé.
+
+Les actions de la maquette sont volontairement compatibles avec les garde-fous : ouvrir le brouillon dans Outlook, modifier, ignorer, classer ou régénérer. Aucun bouton n'envoie automatiquement un email et aucune suppression directe n'est proposée. Les données sont encore locales de démonstration ; le branchement vers `AssistantCommercial_EmailLog2`, DraftLog/Dataverse, les liens Outlook et les flows Power Automate est documenté dans `dashboard/README.md`.
+
 ## Mise à jour du 26 septembre 2026 : cahier des charges de référence
 
 Le cahier des charges complet du projet a été ajouté dans `docs/CAHIER_DES_CHARGES.md` et référencé depuis `README.md`. Il devient le document de référence lors d'un changement de poste ou d'une évolution fonctionnelle.

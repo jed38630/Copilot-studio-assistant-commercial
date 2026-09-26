@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Tableau de bord Assistant Commercial" />
+    <title>Assistant Commercial | Tableau de bord</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navigation principale">
+        <div class="brand-lockup">
+          <div class="brand-mark" aria-hidden="true">AC</div>
+          <div>
+            <strong>Assistant<br />Commercial</strong>
+            <span>Centre de pilotage</span>
+          </div>
+        </div>
+
+        <div class="connection-state">
+          <span class="status-dot" aria-hidden="true"></span>
+          <div>
+            <strong>Connecté</strong>
+            <span>Dernière synchro · 2 min</span>
+          </div>
+        </div>
+
+        <nav class="primary-nav">
+          <a class="nav-item is-active" href="#inbox" aria-current="page">
+            <span class="nav-icon" aria-hidden="true">▦</span>
+            <span>Vue d’ensemble</span>
+            <span class="nav-count">14</span>
+          </a>
+          <a class="nav-item" href="#validation">
+            <span class="nav-icon" aria-hidden="true">✓</span>
+            <span>À valider</span>
+            <span class="nav-count nav-count-alert">3</span>
+          </a>
+          <a class="nav-item" href="#history">
+            <span class="nav-icon" aria-hidden="true">↺</span>
+            <span>Historique</span>
+          </a>
+          <a class="nav-item" href="#rules">
+            <span class="nav-icon" aria-hidden="true">≡</span>
+            <span>Règles &amp; agents</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="guardrail-note">
+            <span class="shield-icon" aria-hidden="true">◆</span>
+            <div>
+              <strong>Mode protégé</strong>
+              <span>Validation humaine requise</span>
+            </div>
+          </div>
+          <button class="profile-button" type="button" data-action="profile">
+            <span class="avatar avatar-jd">JD</span>
+            <span class="profile-copy"><strong>Jérémy Druelle</strong><small>Responsable commercial</small></span>
+            <span aria-hidden="true">···</span>
+          </button>
+        </div>
+      </aside>
+
+      <main class="main-content" id="inbox">
+        <header class="topbar">
+          <div class="breadcrumb"><span>Assistant Commercial</span><span aria-hidden="true">/</span><strong>Boîte de réception</strong></div>
+          <div class="topbar-actions">
+            <button class="icon-button" type="button" aria-label="Rechercher" title="Rechercher" data-action="focus-search">⌕</button>
+            <button class="icon-button" type="button" aria-label="Notifications" title="Notifications" data-action="notifications">♢<span class="notification-dot"></span></button>
+            <button class="help-button" type="button" data-action="help">?</button>
+          </div>
+        </header>
+
+        <section class="page-heading" aria-labelledby="page-title">
+          <div>
+            <p class="eyebrow">Mardi 26 septembre 2026</p>
+            <h1 id="page-title">Boîte de réception <span>— Aujourd’hui</span></h1>
+            <p class="heading-summary">Votre assistant a préqualifié les nouveaux messages et prépare les prochaines actions.</p>
+          </div>
+          <div class="heading-controls">
+            <button class="date-control" type="button" data-action="date-filter"><span aria-hidden="true">□</span> Aujourd’hui <span aria-hidden="true">⌄</span></button>
+            <button class="primary-button" type="button" data-action="refresh"><span aria-hidden="true">↻</span> Actualiser</button>
+          </div>
+        </section>
+
+        <section class="metrics-grid" aria-label="Indicateurs du jour">
+          <article class="metric-card metric-card-primary">
+            <div class="metric-icon" aria-hidden="true">✦</div>
+            <div><strong data-metric="total">14</strong><span>emails analysés</span></div>
+            <span class="metric-trend">+4 aujourd’hui</span>
+          </article>
+          <article class="metric-card metric-card-danger">
+            <div class="metric-icon" aria-hidden="true">×</div>
+            <div><strong data-metric="spam">8</strong><span>spams écartés</span></div>
+            <span class="metric-caption">quarantaine</span>
+          </article>
+          <article class="metric-card metric-card-success">
+            <div class="metric-icon" aria-hidden="true">✓</div>
+            <div><strong data-metric="auto">3</strong><span>traités automatiquement</span></div>
+            <span class="metric-caption">sans alerte</span>
+          </article>
+          <article class="metric-card metric-card-warning">
+            <div class="metric-icon" aria-hidden="true">!</div>
+            <div><strong data-metric="validation">3</strong><span>à valider</span></div>
+            <span class="metric-caption">attention requise</span>
+          </article>
+        </section>
+
+        <section class="workspace-grid" aria-label="Messages et détail">
+          <section class="mail-panel" aria-labelledby="mail-list-title">
+            <div class="panel-heading">
+              <div><h2 id="mail-list-title">Emails traités</h2><span class="panel-subtitle"><span class="live-dot"></span> Mise à jour en temps réel</span></div>
+              <button class="more-button" type="button" aria-label="Plus d’options" title="Plus d’options">···</button>
+            </div>
+            <div class="mail-toolbar">
+              <label class="search-field"><span aria-hidden="true">⌕</span><input id="mail-search" type="search" placeholder="Rechercher un email" autocomplete="off" /></label>
+              <div class="filter-tabs" role="tablist" aria-label="Filtrer les emails">
+                <button class="filter-tab is-active" type="button" data-filter="all" role="tab" aria-selected="true">Tous <span>14</span></button>
+                <button class="filter-tab" type="button" data-filter="validation" role="tab" aria-selected="false">À valider <span>3</span></button>
+                <button class="filter-tab" type="button" data-filter="important" role="tab" aria-selected="false">Importants</button>
+              </div>
+            </div>
+            <div class="mail-list" id="mail-list" aria-live="polite"></div>
+            <div class="list-footer"><span id="list-count">6 emails affichés</span><button class="text-button" type="button" data-action="load-more">Afficher l’historique <span aria-hidden="true">→</span></button></div>
+          </section>
+
+          <aside class="detail-panel" aria-labelledby="detail-title" id="detail-panel">
+            <div class="detail-empty" id="detail-empty"><span class="empty-icon" aria-hidden="true">✦</span><h2>Sélectionnez un email</h2><p>Le détail, le contexte IA et les actions disponibles apparaîtront ici.</p></div>
+            <div class="detail-content" id="detail-content" hidden>
+              <div class="detail-header">
+                <div><p class="eyebrow">Détail du message</p><h2 id="detail-title">Demande de devis</h2></div>
+                <button class="icon-button" type="button" aria-label="Fermer le détail" title="Fermer" data-action="close-detail">×</button>
+              </div>
+              <div class="detail-status-row"><span class="status-pill status-validation" id="detail-status">À valider</span><span class="detail-time" id="detail-time">09:41 · aujourd’hui</span></div>
+
+              <div class="sender-block"><span class="avatar" id="detail-avatar">JD</span><div><strong id="detail-sender">Jean Dupont</strong><span id="detail-address">jean.dupont@exemple.fr</span></div><button class="more-button" type="button" aria-label="Actions sur le message" title="Actions sur le message">···</button></div>
+              <dl class="mail-meta"><div><dt>À</dt><dd id="detail-recipients">Jérémy Druelle</dd></div><div><dt>Objet</dt><dd id="detail-subject">Migration Cloud</dd></div></dl>
+
+              <section class="detail-section"><div class="section-label"><span>Message original</span><button class="text-button" type="button" data-action="open-outlook">Ouvrir dans Outlook</button></div><div class="original-message" id="detail-original"></div></section>
+              <section class="detail-section ai-section"><div class="section-label"><span><span class="ai-spark">✦</span> Résumé de l’assistant</span><span class="confidence-label" id="detail-confidence">92 % de confiance</span></div><p id="detail-summary"></p><div class="classification-row"><span class="classification-chip" id="detail-domain">Commercial</span><span class="classification-chip" id="detail-product">Cloud</span><span class="classification-chip" id="detail-priority">Priorité haute</span></div><div class="confidence-track"><span id="confidence-bar"></span></div></section>
+              <section class="detail-section draft-section"><div class="section-label"><span>Réponse proposée par l’IA</span><span class="draft-label">Brouillon Outlook</span></div><div class="draft-box" id="detail-draft"></div></section>
+              <div class="guardrail-inline"><span aria-hidden="true">◆</span><span>L’envoi final se fait manuellement dans Outlook après validation.</span></div>
+              <div class="detail-actions"><button class="secondary-button" type="button" data-action="ignore">Ignorer</button><button class="secondary-button" type="button" data-action="classify">Classer</button><button class="secondary-button" type="button" data-action="regenerate">Re-générer</button><button class="primary-button" type="button" data-action="edit">Modifier le brouillon</button><button class="primary-button is-outlook" type="button" data-action="open-outlook"><span aria-hidden="true">↗</span> Ouvrir dans Outlook</button></div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
