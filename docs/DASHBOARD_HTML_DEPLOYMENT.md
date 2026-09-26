@@ -68,3 +68,15 @@ Pour une entreprise déjà équipée : App Service ou un hébergement web intern
 Le front-end contient maintenant l’adaptateur API et fonctionne encore en mode mock par défaut. La bascule live nécessite de créer l’API protégée et ses deux flux d’action dans le tenant. Aucun endpoint réel n’est inventé dans le dépôt et aucun email ne peut être envoyé par le dashboard.
 
 Un squelette Node sans dépendance est fourni dans `dashboard/api/server.mjs`. Il lit les éléments SharePoint via Microsoft Graph et relaie uniquement `ignore`, `classify` et `regenerate` vers des URL de flux placées dans les variables d’environnement. Il ne contient aucune route d’envoi ni de suppression. Avant production, placer cette API derrière Entra ID ou une passerelle équivalente et accorder uniquement les permissions SharePoint nécessaires en lecture et journalisation.
+
+## Flux Power Automate de lecture créé dans le tenant
+
+Un flux nommé `AC - Dashboard - Lire journaux` a été enregistré pour valider le contrat HTTP de lecture : déclencheur HTTP, lecture SharePoint de `AssistantCommercial_EmailLog2`, puis action `Réponse` JSON. Power Automate le signale comme dépendant d’une licence Premium et indique qu’il ne peut pas être utilisé dans l’état actuel. Il reste un artefact de préparation et de validation du contrat, pas un endpoint de production.
+
+Ne pas publier son URL dans `dashboard/config.js` et ne pas la transmettre au navigateur. Une URL de déclenchement Power Automate est un secret opérationnel. La mise en production doit passer par une API derrière Entra ID, ou par l’activation explicite de la licence Premium et une passerelle serveur qui conserve l’URL hors du front-end.
+
+La configuration live ne doit être changée que lorsque les trois conditions sont réunies :
+
+1. l’API répond réellement à `GET /api/dashboard/emails` avec `{ "items": [...] }` ;
+2. l’authentification Entra ID et les permissions SharePoint ont été validées par l’administrateur ;
+3. les routes d’action `ignore`, `classify` et `regenerate` sont créées, journalisées et vérifiées sans envoi ni suppression.

@@ -155,3 +155,17 @@ Le dashboard HTML est confirmé comme interface principale ; Power Apps n’est 
 Le navigateur ne porte aucun secret. Avant utilisation réelle, l’API doit être hébergée derrière Microsoft Entra ID ou une passerelle équivalente, puis les URLs des flows d’action doivent être renseignées dans l’environnement du serveur. Aucun endpoint d’envoi ou de suppression n’est prévu. La configuration de déploiement est dans `docs/DASHBOARD_HTML_DEPLOYMENT.md`.
 
 Les paramètres non sensibles ont été récupérés directement dans la session Microsoft 365 et consignés dans `docs/RUNTIME_PARAMETERS.md` : environnement, domaine tenant, site SharePoint, identifiants des listes et identifiant composite Graph. Le flux `AC - 24-7 - Nouvel email entrant` est actif. L’ancien flux Outlook V3 est désactivé et ne doit pas être réactivé en parallèle. Aucun endpoint HTTP d’action n’est actuellement exposé par les flux existants.
+
+## Mise à jour du 26 septembre 2026 : premier flux de lecture du dashboard
+
+Le flux Power Automate `AC - Dashboard - Lire journaux` a été créé et enregistré dans l’environnement `I'CAR SYSTEMS`. Il contient uniquement :
+
+1. le déclencheur HTTP `Demander - Lors de la réception d’une requête HTTP` ;
+2. l’action SharePoint `Obtenir les éléments` sur `AssistantCommercial_EmailLog2` du site `Equipe Commerciale Zone A` ;
+3. l’action `Répondre - Journaux EmailLog2` avec une réponse JSON et l’en-tête `Content-Type: application/json`.
+
+Le flux a été enregistré mais Power Automate indique qu’il ne peut pas être utilisé avec la licence actuelle : le déclencheur HTTP et l’action Réponse sont signalés comme Premium. Le flux n’est donc pas considéré comme un endpoint live disponible, et son URL ne doit pas être copiée dans le navigateur ni dans GitHub.
+
+Le dashboard reste volontairement en `mode: "mock"`. Pour passer en live, il faut d’abord choisir une voie d’hébergement approuvée : licence Premium Power Automate pour ce flux, ou API Azure protégée par Entra ID avec les autorisations SharePoint/Graph validées par l’administrateur. La seconde voie est recommandée pour éviter d’exposer une URL de déclenchement Power Automate au navigateur.
+
+Le flux enregistré doit être contrôlé avant toute activation : tester uniquement la lecture et la réponse JSON, puis vérifier qu’aucune action Outlook, envoi, suppression ou déplacement n’a été ajoutée. Les trois avertissements actuels concernent la licence Premium et l’absence de filtre OData sur la lecture SharePoint ; ils ne constituent pas une validation fonctionnelle.
