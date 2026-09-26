@@ -197,3 +197,9 @@ La stack Docker est prête dans `deployment/proxmox` : `dashboard-web` sert le f
 Le déploiement ne contient aucun secret : `deployment/proxmox/.env.example` doit être copié localement en `.env`, rempli hors Git, puis transmis uniquement à la VM. L’accès réseau doit rester limité au LAN ou au VPN jusqu’à la mise en place d’un reverse proxy HTTPS avec authentification Entra ID. Aucun endpoint d’envoi ou de suppression n’a été ajouté.
 
 La configuration front-end détecte maintenant automatiquement une API same-origin lorsqu’elle est servie par Nginx, tout en conservant le mode démo pour les ouvertures locales et les prévisualisations SharePoint.
+
+## Mise à jour du 26 septembre 2026 : conteneur Proxmox créé
+
+Un conteneur LXC dédié a été créé dans le nœud Proxmox : CT 113 `assistant-commercial`. Il utilise le template Debian 12, est non privilégié, dispose de `nesting=1`, de 2 vCPU, de 4 Gio de mémoire, de 512 Mio de swap, d’un disque de 32 Gio et d’une adresse IPv4 en DHCP. Le conteneur a été démarré automatiquement et la tâche Proxmox est terminée avec succès.
+
+Proxmox a affiché un avertissement de capacité du thin pool : environ 16 Gio libres au moment de la création. Aucun autre disque ou conteneur n’a été ajouté. Prochaine étape : relever l’adresse IP du CT 113, vérifier l’accès SSH, installer Docker et lancer `scripts/deploy-proxmox.ps1` depuis le PC de développement. Le mot de passe administrateur reste uniquement dans Proxmox et n’est pas enregistré dans le dépôt.
