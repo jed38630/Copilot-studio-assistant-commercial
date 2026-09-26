@@ -1,6 +1,12 @@
 # Etat de reprise - Assistant Commercial
 
-Dernière sauvegarde : 20 septembre 2026
+Dernière sauvegarde : 26 septembre 2026
+
+## Mise à jour du 26 septembre 2026 : cahier des charges de référence
+
+Le cahier des charges complet du projet a été ajouté dans `docs/CAHIER_DES_CHARGES.md` et référencé depuis `README.md`. Il devient le document de référence lors d'un changement de poste ou d'une évolution fonctionnelle.
+
+Il couvre le périmètre, les catégories métier, les produits et alias, les responsabilités des agents, les workflows temps réel et historique, le contrat de sortie du triage, les brouillons, les listes et paramètres SharePoint, la sécurité, les critères d'acceptation, le déploiement et l'exploitation. Toute nouvelle fonctionnalité doit être ajoutée à ce cahier des charges avant d'être considérée comme conforme.
 
 ## Dernière modification du workflow
 
