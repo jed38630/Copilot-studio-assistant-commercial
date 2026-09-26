@@ -137,3 +137,13 @@ npm test
 ```
 
 Puis ouvrir `REPRISE_PROJET.md` pour le contexte complet et reprendre dans Copilot Studio avec le même environnement Microsoft 365.
+
+## Mise à jour du 26 septembre 2026 : dashboard Power Apps et architecture
+
+Le dashboard `Assistant Commercial - Dashboard` a été créé dans l’environnement `I'CAR SYSTEMS (default)` et publié. Il utilise en lecture les listes SharePoint suivantes du site `Equipe Commerciale Zone A` : `AssistantCommercial_EmailLog2`, `AssistantCommercial_DraftLog` et `AssistantCommercial_Settings`. Le lecteur publié affiche bien les données réelles de `AssistantCommercial_EmailLog2`.
+
+Le schéma d’architecture est disponible dans `docs/assistant-commercial-architecture.svg`. Il formalise la séparation suivante : Outlook déclenche, Copilot Studio comprend et prépare, Power Automate orchestre et journalise, SharePoint ou Dataverse stocke, Teams alerte et Power Apps affiche.
+
+Contrôle effectué dans Power Apps Studio : le canevas généré expose les sources SharePoint mais ne propose pas directement les flux métier existants dans le menu d’insertion ou le panneau Données. Aucun nouveau triage, appel d’agent ou envoi n’a donc été ajouté dans Power Apps. Le branchement restant consiste à créer les commandes d’interface et à les relier aux flux d’action existants depuis un écran contrôlé, sans dupliquer les règles métier.
+
+État fonctionnel : le dashboard est publié comme vue live des journaux ; les compteurs, filtres, détail enrichi et actions finales restent à personnaliser dans la version Power Apps. Les actions sensibles doivent rester des commandes de validation, d’ouverture du brouillon ou de journalisation ; aucun bouton ne doit envoyer un email.
