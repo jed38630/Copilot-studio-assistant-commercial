@@ -1,7 +1,9 @@
 window.AC_CONFIG = {
-  // URL de l'API serveur qui fait le lien avec SharePoint et Power Automate.
-  // Laisser vide pour utiliser la démonstration locale.
+  // auto active SharePoint REST si la page est hébergée dans le site cible.
   apiBaseUrl: "",
-  mode: "mock",
+  mode: "auto",
+  sharePointSiteUrl: "https://<tenant>.sharepoint.com/sites/<site>",
+  emailLogListTitle: "AssistantCommercial_EmailLog2",
+  actionListTitle: "AssistantCommercial_DashboardActions",
   refreshIntervalMs: 60000
 };

@@ -169,3 +169,13 @@ Le flux a été enregistré mais Power Automate indique qu’il ne peut pas êtr
 Le dashboard reste volontairement en `mode: "mock"`. Pour passer en live, il faut d’abord choisir une voie d’hébergement approuvée : licence Premium Power Automate pour ce flux, ou API Azure protégée par Entra ID avec les autorisations SharePoint/Graph validées par l’administrateur. La seconde voie est recommandée pour éviter d’exposer une URL de déclenchement Power Automate au navigateur.
 
 Le flux enregistré doit être contrôlé avant toute activation : tester uniquement la lecture et la réponse JSON, puis vérifier qu’aucune action Outlook, envoi, suppression ou déplacement n’a été ajoutée. Les trois avertissements actuels concernent la licence Premium et l’absence de filtre OData sur la lecture SharePoint ; ils ne constituent pas une validation fonctionnelle.
+
+## Mise à jour du 26 septembre 2026 : voie SharePoint sans Premium pour le dashboard HTML
+
+Pour sortir du mode démonstration sans exposer l’URL du flux HTTP Premium, le front-end a été adapté avec un mode `auto/sharepoint` dans `dashboard/api.js` et `dashboard/config.js`.
+
+Lorsque `dashboard/index.html` est hébergé dans le site `EquipeCommercialeZoneA`, le dashboard lit `AssistantCommercial_EmailLog2` via l’API REST SharePoint avec la session Microsoft 365 de l’utilisateur. Lorsqu’il est ouvert depuis le disque local, il reste en mode démonstration ; cette séparation évite une fausse impression de mode live pendant les tests locaux.
+
+Les actions `ignore`, `classify` et `regenerate` ne sont pas exécutées directement par le navigateur. Elles sont écrites dans la nouvelle liste cible `AssistantCommercial_DashboardActions`, puis traitées par un flux SharePoint standard décrit dans `power-automate/flows/AC-dashboard-actions-queue.md`. Ce flux doit conserver les garde-fous : aucun envoi, aucune suppression directe, création de brouillon uniquement pour `regenerate`, et journalisation de chaque demande.
+
+Le schéma de la liste est dans `sharepoint/schema/AssistantCommercial_DashboardActions.md`. Le code et la documentation sont prêts dans le dépôt ; il reste à créer la liste et le flux dans le site d’équipe, déposer les fichiers du dashboard dans `Site Assets`, puis effectuer un test réel de lecture et de demande de brouillon. Si le tenant bloque les scripts HTML dans SharePoint, la solution de repli est une API Azure protégée par Entra ID.

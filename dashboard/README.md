@@ -29,7 +29,13 @@ Cette instance a servi à valider la connexion SharePoint, mais elle n’est pas
 
 ## Branchement Microsoft 365
 
-Le dashboard utilise `dashboard/api.js` comme adaptateur. Il fonctionne en mode local tant que `dashboard/config.js` indique `mode: "mock"`. Pour le mode live, créer `config.js` à partir de `config.example.js` et renseigner uniquement l’URL publique de l’API :
+Le dashboard utilise `dashboard/api.js` comme adaptateur. Le mode `auto` conserve la démonstration lorsqu’on ouvre le fichier localement et active automatiquement le mode SharePoint lorsque la page est hébergée sous `EquipeCommercialeZoneA`.
+
+En mode SharePoint, aucune URL Power Automate, aucun secret et aucun jeton permanent ne sont mis dans le navigateur. La page lit `AssistantCommercial_EmailLog2` avec l’API REST SharePoint et crée les demandes d’action dans `AssistantCommercial_DashboardActions`. La session Microsoft 365 de l’utilisateur porte l’authentification.
+
+Créer la liste d’actions avec [`sharepoint/schema/AssistantCommercial_DashboardActions.md`](../sharepoint/schema/AssistantCommercial_DashboardActions.md), puis déployer le flux standard [`AC-dashboard-actions-queue.md`](../power-automate/flows/AC-dashboard-actions-queue.md).
+
+Le mode API externe reste disponible pour une cible Azure protégée par Entra ID :
 
 ```js
 window.AC_CONFIG = { apiBaseUrl: "https://<api>/assistant-commercial", mode: "api", refreshIntervalMs: 60000 };

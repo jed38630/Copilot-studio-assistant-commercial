@@ -13,6 +13,23 @@ Navigateur
 
 Une API TypeScript est préférée à PHP pour rester dans le même langage que les scripts du dépôt et utiliser facilement Microsoft Graph et les bibliothèques Microsoft. Un hébergement statique seul convient pour la maquette, mais ne doit pas contenir de secret ni de jeton permanent.
 
+## Voie MVP sans licence Premium : hébergement SharePoint
+
+La voie retenue pour rendre le dashboard utilisable sans déclencheur HTTP Premium est de déposer les fichiers HTML, CSS et JavaScript dans `Site Assets` du site `Equipe Commerciale Zone A`. Le mode `auto` de `dashboard/config.js` détecte cet hébergement et utilise l’API REST du même site :
+
+```text
+Page SharePoint / Site Assets
+  -> API REST SharePoint avec la session Microsoft 365
+  -> AssistantCommercial_EmailLog2
+  -> AssistantCommercial_DashboardActions
+  -> flux SharePoint standard « Lors de la création d’un élément »
+  -> Copilot Studio / Outlook / journaux
+```
+
+La liste `AssistantCommercial_DashboardActions` et son flux sont décrits dans `sharepoint/schema/AssistantCommercial_DashboardActions.md` et `power-automate/flows/AC-dashboard-actions-queue.md`. Cette option ne nécessite ni secret dans le navigateur ni URL de déclenchement exposée. Elle nécessite en revanche que l’administrateur autorise l’hébergement de fichiers HTML/JavaScript dans le site et que les permissions de la liste d’actions soient limitées.
+
+Si le tenant bloque l’exécution de JavaScript dans `Site Assets`, conserver la même API REST et publier l’interface sous forme de page moderne avec un composant approuvé, ou utiliser l’option Azure/Entra ID ci-dessous. Ne pas contourner les règles de sécurité du tenant.
+
 ## Contrat API du dashboard
 
 Configurer `dashboard/config.js` à partir de `dashboard/config.example.js` uniquement avec l’URL publique de l’API. Les paramètres SharePoint récupérés sont documentés dans [`RUNTIME_PARAMETERS.md`](RUNTIME_PARAMETERS.md) :
