@@ -9,3 +9,5 @@ Thumbs.db
 *.log
 tmp/
 temp/
+deployment/proxmox/.env
+deployment/proxmox/*.tfvars

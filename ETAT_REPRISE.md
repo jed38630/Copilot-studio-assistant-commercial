@@ -187,3 +187,13 @@ La liste SharePoint `AssistantCommercial_DashboardActions` a été créée dans 
 Le flux Power Automate standard `AC - Dashboard - Traiter demandes d’action` a été créé et vérifié comme activé. Il utilise le déclencheur SharePoint « Lorsqu’un élément est créé », sur cette liste, puis met la demande à `Processing`. La suite du routage métier `ignore`, `classify` et `regenerate` doit encore être complétée avant de considérer les boutons comme opérationnels de bout en bout ; aucun envoi ni suppression n’a été ajouté.
 
 Le dossier `assistant-commercial-dashboard` a été créé dans `Site Assets` pour héberger les fichiers HTML. Le chargement automatique des fichiers locaux a été bloqué par la sécurité de la session navigateur et n’a pas été contourné. Il reste donc à y déposer manuellement `index.html`, `styles.css`, `app.js`, `api.js` et `config.js`, puis ouvrir `SiteAssets/assistant-commercial-dashboard/index.html` pour vérifier le mode SharePoint réel.
+
+## Mise à jour du 26 septembre 2026 : déploiement Docker Proxmox préparé
+
+La prévisualisation HTML de SharePoint a été confirmée comme isolée dans une iframe `blob/about:srcdoc` : elle affiche l’interface, mais ne peut pas activer de manière fiable le mode live. Le dashboard autonome devient donc la cible d’exécution.
+
+La stack Docker est prête dans `deployment/proxmox` : `dashboard-web` sert le front-end via Nginx et relaie `/api` vers `dashboard-api`, qui réutilise le serveur Node existant. Le fichier `scripts/deploy-proxmox.ps1` transfère les fichiers par SSH/SCP et lance `docker compose up -d --build` sur une VM Linux Proxmox déjà créée. Le guide complet est `docs/PROXMOX_DOCKER_DEPLOYMENT.md`.
+
+Le déploiement ne contient aucun secret : `deployment/proxmox/.env.example` doit être copié localement en `.env`, rempli hors Git, puis transmis uniquement à la VM. L’accès réseau doit rester limité au LAN ou au VPN jusqu’à la mise en place d’un reverse proxy HTTPS avec authentification Entra ID. Aucun endpoint d’envoi ou de suppression n’a été ajouté.
+
+La configuration front-end détecte maintenant automatiquement une API same-origin lorsqu’elle est servie par Nginx, tout en conservant le mode démo pour les ouvertures locales et les prévisualisations SharePoint.

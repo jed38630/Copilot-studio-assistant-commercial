@@ -19,6 +19,10 @@
   function effectiveMode() {
     if (config.mode === "sharepoint") return "sharepoint";
     if (config.mode === "auto" && isSharePointHosted()) return "sharepoint";
+    // A standalone deployment uses the same-origin API exposed by the web container.
+    // SharePoint's blob/about:srcdoc preview must remain a local demo.
+    if (config.mode === "api") return "api";
+    if (config.mode === "auto" && config.apiBaseUrl && !["file:", "blob:", "about:"].includes(window.location.protocol)) return "api";
     return config.mode || "mock";
   }
 

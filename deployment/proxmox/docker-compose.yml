@@ -1,0 +1,28 @@
+services:
+  dashboard-api:
+    build:
+      context: ../..
+      dockerfile: deployment/proxmox/Dockerfile.api
+    env_file:
+      - .env
+    expose:
+      - "8787"
+    restart: unless-stopped
+    networks:
+      - assistant-commercial
+
+  dashboard-web:
+    build:
+      context: ../..
+      dockerfile: deployment/proxmox/Dockerfile.web
+    depends_on:
+      - dashboard-api
+    ports:
+      - "${DASHBOARD_HTTP_PORT:-8080}:80"
+    restart: unless-stopped
+    networks:
+      - assistant-commercial
+
+networks:
+  assistant-commercial:
+    driver: bridge

@@ -1,0 +1,10 @@
+FROM node:20-alpine
+
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY dashboard/api/server.mjs ./dashboard/api/server.mjs
+
+USER node
+EXPOSE 8787
+CMD ["node", "dashboard/api/server.mjs"]
