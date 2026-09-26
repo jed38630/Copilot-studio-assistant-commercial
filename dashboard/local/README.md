@@ -9,7 +9,7 @@ Power Automate -> dashboard-data.json -> OneDrive synchronisé -> serveur local 
 dashboard HTML -> actions/*.json -> OneDrive -> Power Automate -> journalisation / brouillon
 ```
 
-Le serveur local ne possède aucune route d’envoi ou de suppression. Les actions autorisées sont `ignore`, `classify` et `regenerate`. Chaque demande reçoit un `ActionId` unique et doit être dédupliquée dans Power Automate.
+Le serveur local ne possède aucune route d’envoi ou de suppression. Les actions autorisées sont `ignore`, `classify` et `regenerate`. Chaque demande reçoit un `ActionId` unique et doit être dédupliquée dans Power Automate. Le prototype utilise la page racine avec un paramètre de requête pour éviter les blocages de certaines extensions de navigateur sur les chemins d’API locaux.
 
 ## Essai immédiat
 

@@ -91,6 +91,12 @@ const contentTypes = {
   ".json": "application/json; charset=utf-8"
 };
 
+const localConfig = `window.AC_CONFIG = ${JSON.stringify({
+  apiBaseUrl: "/?resource=local",
+  mode: "api",
+  refreshIntervalMs: 60000
+})};\n`;
+
 const server = http.createServer(async (request, response) => {
   try {
     const url = new URL(request.url, `http://${request.headers.host}`);
@@ -98,13 +104,34 @@ const server = http.createServer(async (request, response) => {
       response.writeHead(204, { "Access-Control-Allow-Origin": `http://localhost:${port}`, "Access-Control-Allow-Headers": "Content-Type", "Access-Control-Allow-Methods": "GET,POST,OPTIONS" });
       return response.end();
     }
+    const resource = url.searchParams.get("resource") || "";
+    if (resource.endsWith("/dashboard/emails") && request.method === "GET") return sendJson(response, 200, await readDashboardData());
+    if (resource.endsWith("/dashboard/actions") && request.method === "POST") return sendJson(response, 202, await writeAction(await readBody(request)));
     if (request.method === "GET" && url.pathname === "/health") return sendJson(response, 200, { ok: true, dataFile, actionsDir });
-    if (request.method === "GET" && url.pathname === "/api/dashboard/emails") return sendJson(response, 200, await readDashboardData());
-    if (request.method === "POST" && url.pathname === "/api/dashboard/actions") return sendJson(response, 202, await writeAction(await readBody(request)));
+    if (request.method === "GET" && url.pathname === "/local/dashboard/emails") return sendJson(response, 200, await readDashboardData());
+    if (request.method === "POST" && url.pathname === "/local/dashboard/actions") return sendJson(response, 202, await writeAction(await readBody(request)));
     if (request.method !== "GET") return sendJson(response, 405, { error: "Méthode non autorisée" });
+
+    if (url.pathname === "/client.js") {
+      const body = await readFile(path.join(dashboardRoot, "api.js"), "utf8");
+      response.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8", "Cache-Control": "no-store" });
+      return response.end(body);
+    }
+    if (url.pathname === "/" || url.pathname === "/index.html") {
+      let body = await readFile(path.join(dashboardRoot, "index.html"), "utf8");
+      const clientBody = await readFile(path.join(dashboardRoot, "api.js"), "utf8");
+      body = body.replace('<script src="config.js"></script>', `<script>${localConfig}</script>`);
+      body = body.replace('<script src="api.js"></script>', `<script>${clientBody}</script>`);
+      response.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
+      return response.end(body);
+    }
 
     const file = safeStaticPath(url.pathname);
     if (!file) return sendJson(response, 400, { error: "Chemin invalide" });
+    if (url.pathname === "/config.js") {
+      response.writeHead(200, { "Content-Type": "text/javascript; charset=utf-8", "Cache-Control": "no-store" });
+      return response.end(localConfig);
+    }
     const body = await readFile(file);
     response.writeHead(200, { "Content-Type": contentTypes[path.extname(file)] || "application/octet-stream", "Cache-Control": "no-store" });
     response.end(body);
@@ -114,7 +141,7 @@ const server = http.createServer(async (request, response) => {
   }
 });
 
-server.listen(port, "127.0.0.1", () => {
+server.listen(port, "localhost", () => {
   console.log(`Dashboard local: http://localhost:${port}/`);
   console.log(`Données OneDrive attendues: ${dataFile}`);
   console.log(`Actions OneDrive écrites dans: ${actionsDir}`);

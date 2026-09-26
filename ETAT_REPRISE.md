@@ -245,3 +245,5 @@ Un prototype exécutable est disponible dans `dashboard/local` pour un usage sur
 - aucun endpoint d’envoi ou de suppression n’existe.
 
 Le test local a été réalisé avec deux messages d’exemple : la page répond en HTTP 200, la lecture JSON fonctionne et une action `regenerate` est bien écrite. La procédure est dans `dashboard/local/README.md`. Cette variante est adaptée à un poste local allumé et synchronisé par OneDrive ; elle ne remplace pas l’authentification nécessaire pour rendre le dashboard Proxmox accessible à plusieurs postes ou 24/7.
+
+Le prototype a ensuite été lancé sur le poste de Jérémy avec le dossier OneDrive `OneDrive - NEXTLANE\Assistant Commercial Dashboard`. Chrome affiche maintenant `Connecté au processus`, les deux messages du JSON sont visibles et un clic réel sur `Re-générer` a créé un fichier d’action `regenerate` dans le dossier `actions`. Le serveur local reste lancé sur `http://localhost:8090/` pour la démonstration.
